@@ -795,17 +795,9 @@ renderRelations();
 renderProjects();
 renderDiary();
 
-(function() {
- const MARQUEE_ITEMS = ["ふりはら's dream space","✦","vaporwave","✦","よろしくね","✦"];
-(function() {
-  const wrap = document.getElementById('marquee-wrap');
-  if (!wrap) return;
+const MARQUEE_ITEMS = ["ふりはら's dream space","✦","vaporwave","✦","よろしくね","✦"];
+const wrap = document.getElementById('marquee-wrap');
+if (wrap) {
   const html = MARQUEE_ITEMS.map(function(t){ return '<span>' + t + '</span>'; }).join('');
   wrap.innerHTML = '<div class="marquee-inner">' + html + html + '</div>';
-})();
-
-  <div class="marquee-wrap" id="marquee-wrap"></div>
-  </script>
-  
-</body>
-</html>
+}
