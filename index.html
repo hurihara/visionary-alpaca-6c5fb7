@@ -421,9 +421,9 @@ input[type=range] { width: 75px; accent-color: var(--pink); }
         </div>
         <!-- SNSリンク：hrefを自分のURLに書き換えてね -->
         <div class="sns-row">
-          <a href="https://www.pixiv.net/users/123244740" class="sns-a" title="Pixiv">P</a>
-          <a href="#" class="sns-a" title="Instagram">◎</a>
-          <a href="#" class="sns-a" title="その他">✦</a>
+          <a href="https://www.pixiv.net/users/123244740" class="sns-a" title="Pixiv">𝙿</a>
+          <a href="https://x.com/e75vXVYsYi56568" class="sns-a" title="X/twitter">𝕏</a>
+          <a href="https://www.tiktok.com/@wasa_kiwi10?_r=1&_t=ZS-95pbugWIq2O" class="sns-a" title="TikTok">♪</a>
         </div>
       </div>
     </div>
@@ -432,14 +432,14 @@ input[type=range] { width: 75px; accent-color: var(--pink); }
   <!-- ===== 関係 ===== -->
   <section class="page" id="page-relations">
     <h1 class="page-title">Relations</h1>
-    <p class="page-desc">一緒に何かしてくれた人、大切な人たち。</p>
+    <p class="page-desc">いつもありがとう！大好きな人たち</p>
     <div class="rel-list" id="rel-list"></div>
   </section>
 
   <!-- ===== 企画っ子 ===== -->
   <section class="page" id="page-characters">
     <h1 class="page-title">企画っ子</h1>
-    <p class="page-desc">創作企画に参加させた子たちのページ。</p>
+    <p class="page-desc">創作企画に参加させた子たちのページ</p>
     <div class="proj-tabs" id="proj-tabs"></div>
     <div class="char-grid" id="char-grid"></div>
   </section>
@@ -447,7 +447,7 @@ input[type=range] { width: 75px; accent-color: var(--pink); }
   <!-- ===== 日記 ===== -->
   <section class="page" id="page-diary">
     <h1 class="page-title">Diary</h1>
-    <p class="page-desc">聴いた曲、読んだ本、何でもない日のこと。</p>
+    <p class="page-desc">聴いた曲とか読んだ本とかのゆるーい記録</p>
     <div class="diary-list" id="diary-list"></div>
   </section>
 
@@ -516,8 +516,8 @@ input[type=range] { width: 75px; accent-color: var(--pink); }
 // ---- 関係一覧 ----
 // icon: 絵文字, name: 相手の名前, url: リンク先, badge: 関係の種類, desc: 一言
 const RELATIONS = [
-  { icon:"⚠️", name:"マちゃん",  url:"https://example.com", badge:"ツインレイ", desc:"優しくていつも仲良くしてくれる大好きな子！" },
-  { icon:"🐠", name:"えらちゃん", url:"https://example.com", badge:"友達", desc:"いつもお世話になっています。" },
+  { icon:"⚠️", name:"マちゃん",  url:"https://www.pixiv.net/users/115131546", badge:"ツインレイ", desc:"優しくていつも仲良くしてくれる大好きな子！" },
+  { icon:"🐠", name:"えらちゃん", url:"https://www.pixiv.net/users/115101944", badge:"側近", desc:"たくさんお喋りしてくれる優しい子！𝑩𝑰𝑮 𝑳𝑶𝑽𝑬" },
   // ↓ ここにコピペで追加してね
   // { icon:"⭐", name:"名前", url:"https://...", badge:"友達", desc:"説明" },
 ];
@@ -562,9 +562,7 @@ const CHARACTERS = [
 // category: "music" か "book" か "memo" のどれか
 // 新しいものを上に追加してね！
 const DIARY = [
-  { date:"2026.04.24", category:"music", title:"最近ずっと聴いてる", body:"〇〇の新しいアルバムがよすぎて止まらない。夜に聴くと染みる。", meta:"" },
-  { date:"2026.04.20", category:"book",  title:"読んだ本のこと",     body:"〇〇を読み終えた。主人公の気持ちがわかりすぎてちょっとしんどかった。", meta:"著者名" },
-  { date:"2026.04.15", category:"memo",  title:"何でもない日",       body:"特に何もない日だったけど空がきれいだった。こういう日を残しておきたくて。", meta:"" },
+  { date:"2026.04.25", category:"book",  title:"蟹工船",     body:"先日蟹工船を読了した。めちゃくちゃ怖かった……。ご冥福をお祈りします", meta:"著者名" },
 ];
 
 // ---- Supabase設定（掲示板を使う場合のみ） ----
