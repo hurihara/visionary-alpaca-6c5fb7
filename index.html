@@ -516,8 +516,8 @@ input[type=range] { width: 75px; accent-color: var(--pink); }
 // ---- 関係一覧 ----
 // icon: 絵文字, name: 相手の名前, url: リンク先, badge: 関係の種類, desc: 一言
 const RELATIONS = [
-  { icon:"🌙", name:"なまえ",  url:"https://example.com", badge:"相棒", desc:"一緒に〇〇をやってくれた大切な人。" },
-  { icon:"🌸", name:"なまえ2", url:"https://example.com", badge:"友達", desc:"いつもお世話になっています。" },
+  { icon:"⚠️", name:"マちゃん",  url:"https://example.com", badge:"ツインレイ", desc:"優しくていつも仲良くしてくれる大好きな子！" },
+  { icon:"🐠", name:"えらちゃん", url:"https://example.com", badge:"友達", desc:"いつもお世話になっています。" },
   // ↓ ここにコピペで追加してね
   // { icon:"⭐", name:"名前", url:"https://...", badge:"友達", desc:"説明" },
 ];
@@ -525,16 +525,27 @@ const RELATIONS = [
 // ---- 企画タブ ----
 // id: タブの識別子（英数字）, label: タブに表示する名前
 const PROJECTS = [
-  { id:"project-a", label:"企画A" },
-  { id:"project-b", label:"企画B" },
+  { id:"project-a", label:"こちら、異界ホテルでございます。" },
+  { id:"project-b", label:"こちら乱世、センザイ何でも屋" },
+  { id:"project-c", label:"夢と魔法に排水溝" },
+  { id:"project-d", label:"ふりはら産ポケパロ" },
+  { id:"project-e", label:"この裏社会で、僕達は" },
+
 ];
 
 // ---- 企画っ子 ----
 // project: 上のPROJECTSのidと合わせてね
 const CHARACTERS = [
-  { project:"project-a", icon:"🌙", name:"キャラ名",  reading:"かなよみ", desc:"性格や好きなものなど。",     cs_url:"https://example.com" },
-  { project:"project-a", icon:"🌸", name:"キャラ名2", reading:"かなよみ", desc:"この子の説明文をここに。", cs_url:"https://example.com" },
-  { project:"project-b", icon:"⭐", name:"キャラ名3", reading:"かなよみ", desc:"別の企画の子の説明文。",   cs_url:"https://example.com" },
+  { project:"project-a", icon:"🐝", name:"蜂須賀すみれ",  reading:"はちすかすみれ", desc:"CPあり。気だるげお兄さん", cs_url:"https://www.pixiv.net/artworks/140520866" },
+  { project:"project-a", icon:"🐈‍⬛", name:"キャロル・ルイス", reading:"きゃろる・るいす", desc:"CPあり。生意気なねこちゃん", cs_url:"https://www.pixiv.net/artworks/141903576" },
+  { project:"project-a", icon:"🌷", name:"有栖泰那", reading:"ありすだいな", desc:"恋多き弁護士くん",   cs_url:"https://www.pixiv.net/artworks/142492770" },
+  { project:"project-a", icon:"🐠", name:"オブラコ＝ヴェルシーナ", reading:"おぶらこ＝ゔぇるしーな", desc:"CPあり。暴れん坊ベタちゃん", cs_url:"https://www.pixiv.net/artworks/142615582" },
+  { project:"project-a", icon:"⚖️", name:"フェイフェイ", reading:"ふぇいふぇい", desc:"ふにゃふにゃかわいい結合双生児", cs_url:"https://www.pixiv.net/artworks/142719986" },
+  { project:"project-a", icon:"🐱", name:"ベリー・ベリー", reading:"べりー・べりー", desc:"カリスマ芸能人", cs_url:"https://www.pixiv.net/artworks/142924620" },
+  { project:"project-a", icon:"🥬", name:"チシャ", reading:"ちしゃ", desc:"CPあり。男尊女卑タコ", cs_url:"https://www.pixiv.net/artworks/143019522" },
+  { project:"project-a", icon:"🦈", name:"ネレイア・アビス＝グラキオス", reading:"ねれいあ・あびす＝ぐらきおす", desc:"こだわりつよつよ女子", cs_url:"https://www.pixiv.net/artworks/143095352" },
+  { project:"project-a", icon:"🌆", name:"鳳暮六", reading:"おおとりくれむつ", desc:"ニコニコ借金取り", cs_url:"https://www.pixiv.net/artworks/143651027" },
+  
 ];
 
 // ---- 日記 ----
