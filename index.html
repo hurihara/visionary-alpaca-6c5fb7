@@ -804,11 +804,11 @@ const MARQUEE_ITEMS = [
   { text: "✦", hi: true },
 ];
 (function() {
+ const MARQUEE_ITEMS = ["ふりはら's dream space","✦","vaporwave","✦","よろしくね","✦"];
+(function() {
   const wrap = document.getElementById('marquee-wrap');
   if (!wrap) return;
-  const html = MARQUEE_ITEMS.map(i =>
-    '<span class="' + (i.hi ? 'hi' : '') + '">' + i.text + '</span>'
-  ).join('');
+  const html = MARQUEE_ITEMS.map(function(t){ return '<span>' + t + '</span>'; }).join('');
   wrap.innerHTML = '<div class="marquee-inner">' + html + html + '</div>';
 })();
 
