@@ -794,6 +794,8 @@ async function loadTextPosts() {
 renderRelations();
 renderProjects();
 renderDiary();
+
+<div class="marquee-wrap" id="marquee-wrap"></div>
 const MARQUEE_ITEMS = [
   { text: "ふりはら's dream space", hi: false },
   { text: "✦", hi: true },
@@ -802,14 +804,14 @@ const MARQUEE_ITEMS = [
   { text: "よろしくね", hi: false },
   { text: "✦", hi: true },
 ];
+const MARQUEE_ITEMS = ["ふりはら's dream space","✦","vaporwave","✦","よろしくね","✦"];
 (function() {
   const wrap = document.getElementById('marquee-wrap');
-  const html = MARQUEE_ITEMS.map(i =>
-    `<span class="${i.hi?'hi':''}">${i.text}</span>`
-  ).join('');
-  wrap.innerHTML = `<div class="marquee-inner">${html}${html}</div>`;
+  if (!wrap) return;
+  const items = MARQUEE_ITEMS;
+  const html = items.map(function(t){ return '<span>' + t + '</span>'; }).join('');
+  wrap.innerHTML = '<div class="marquee-inner">' + html + html + '</div>';
 })();
 </script>
-  <div class="marquee-wrap" id="marquee-wrap"></div>
 </body>
 </html>
