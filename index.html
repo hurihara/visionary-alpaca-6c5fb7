@@ -347,6 +347,27 @@ input[type=range] { width: 75px; accent-color: var(--pink); }
   .info-col { min-width: unset; width: 100%; }
   .igrid { grid-template-columns: 1fr; }
 }
+  .marquee-wrap {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+  background: rgba(255,110,199,.18);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,110,199,.3);
+  padding: .45rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 28s linear infinite;
+  font-family: 'VT323', monospace; font-size: 15px; letter-spacing: 3px;
+  color: rgba(255,255,255,.7);
+}
+.marquee-inner span { margin: 0 2.5rem; }
+.marquee-inner .hi { color: #67e8f9; }
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 </style>
 </head>
 <body>
@@ -771,6 +792,22 @@ async function loadTextPosts() {
 renderRelations();
 renderProjects();
 renderDiary();
+const MARQUEE_ITEMS = [
+  { text: "ふりはら's dream space", hi: false },
+  { text: "✦", hi: true },
+  { text: "vaporwave", hi: false },
+  { text: "✦", hi: true },
+  { text: "よろしくね", hi: false },
+  { text: "✦", hi: true },
+];
+(function() {
+  const wrap = document.getElementById('marquee-wrap');
+  const html = MARQUEE_ITEMS.map(i =>
+    `<span class="${i.hi?'hi':''}">${i.text}</span>`
+  ).join('');
+  wrap.innerHTML = `<div class="marquee-inner">${html}${html}</div>`;
+})();
 </script>
+  <div class="marquee-wrap" id="marquee-wrap"></div>
 </body>
 </html>
