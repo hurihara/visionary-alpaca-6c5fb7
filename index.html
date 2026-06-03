@@ -627,8 +627,7 @@ input[type=range] { width: 72px; accent-color: var(--aqua); }
       <div class="hero-title-en">Welcome to Fuchino Aquarium</div>
       <h1 class="hero-title-jp">旧淵ノ海遊館</h1>
       <p class="hero-tagline">
-        深海への入口は、いつもひっそりと開いている。<br>
-        ここを訪れたあなたは、すでに迷い込んでいる。
+        深海への入口は、いつもひっそり佇んでいる。
       </p>
     </div>
 
@@ -671,7 +670,7 @@ input[type=range] { width: 72px; accent-color: var(--aqua); }
     <div class="glass-panel">
       <div class="staff-layout" style="padding:2rem;">
         <div class="staff-id-card glass-panel">
-          <div class="staff-photo">♻️</div>
+          <div class="staff-photo">🌿</div>
           <div class="staff-role">Director / Curator</div>
           <div class="staff-name-jp">ふりはら</div>
           <div class="status-pill staff-status"><div class="status-dot on"></div>在館中</div>
@@ -822,13 +821,14 @@ const NOTICES = [
 
 // ---- 展示エリア（企画） ----
 const EXHIBITS = [
-  { id:"room-a", label:"第1展示室" },
-  { id:"room-b", label:"回廊展示" },
+  { id:"room-a", label:"異界回廊" },
+  { id:"room-b", label:"第一千載展示室" },
   { id:"room-c", label:"魔法水槽" },
   { id:"room-d", label:"特別展示" },
-  { id:"room-e", label:"地下エリア" },
-  { id:"room-f", label:"深海回廊" },
-  { id:"room-g", label:"特殊水槽" },
+  { id:"room-e", label:"地下社会エリア" },
+  { id:"room-f", label:"永久回廊" },
+  { id:"room-g", label:"特殊賭事水槽" },
+  { id:"room-h", label:"不協和展示室" },
 ];
 
 // ---- 展示生物（企画っ子） ----
@@ -844,16 +844,26 @@ const SPECIMENS = [
   { room:"room-a", icon:"🦈", name:"ネレイア・アビス＝グラキオス", reading:"ねれいあ・あびす＝ぐらきおす", desc:"こだわりつよつよ女子", cs_url:"https://www.pixiv.net/artworks/143095352", active:true },
   { room:"room-a", icon:"🌆", name:"鳳暮六", reading:"おおとりくれむつ", desc:"CPあり。ニコニコ借金取り", cs_url:"https://www.pixiv.net/artworks/143651027", active:true },
   { room:"room-a", icon:"🪷", name:"蜂須賀れんげ", reading:"はちすかれんげ", desc:"すみれさん大好きっ子", cs_url:"https://www.pixiv.net/artworks/144728581", active:true },
+  
   { room:"room-b", icon:"🧳", name:"斑目レイカ", reading:"まだらめれいか", desc:"陽気で霧のような3-C担任", cs_url:"https://www.pixiv.net/artworks/140816540", active:true },
+  
   { room:"room-c", icon:"💚", name:"ミド", reading:"みど", desc:"CPあり。アフヌン大好き反社魔法少女", cs_url:"https://www.pixiv.net/artworks/141538177", active:true },
   { room:"room-c", icon:"🖤", name:"クロム", reading:"くろむ", desc:"CPあり。幼馴染大好き思想強魔法少女", cs_url:"https://www.pixiv.net/artworks/141538302", active:true },
+  
   { room:"room-d", icon:"🐝", name:"蜂須賀すみれ", reading:"はちすかすみれ", desc:"CP×。けだるげ養蜂家。いかほてより参加", cs_url:"https://www.pixiv.net/artworks/142501012", active:true },
   { room:"room-d", icon:"🐟", name:"ENA.txt", reading:"えな・てきすと", desc:"暴れ狂うジムリーダー", cs_url:"https://www.pixiv.net/artworks/142519046", active:true },
+  
   { room:"room-e", icon:"🧢", name:"ワワチャン", reading:"わわちゃん", desc:"元気いっぱい医療班員", cs_url:"https://www.pixiv.net/artworks/143826215", active:true },
+  
   { room:"room-f", icon:"🧿", name:"ルーメン・E・クラリオン", reading:"るーめん・いー・くらりおん", desc:"CPあり。穏やか狂気施設長", cs_url:"https://www.pixiv.net/artworks/144223110", active:true },
   { room:"room-f", icon:"🪚", name:"セラ・カーディナル", reading:"せら・かーでぃなる", desc:"CPあり。意思疎通不可能副施設長", cs_url:"https://www.pixiv.net/artworks/144999273", active:true },
+  
   { room:"room-g", icon:"🃏", name:"黒鉄耀", reading:"くろがねよう", desc:"にこにこ陽気なディーラー", cs_url:"https://www.pixiv.net/artworks/144801726", active:true },
   { room:"room-g", icon:"🐕‍🦺", name:"ジャク", reading:"じゃく", desc:"イカれ警察官", cs_url:"https://www.pixiv.net/artworks/144956864", active:true },
+  
+  { room:"room-h", icon:"📣", name:"検閲官", reading:"けんえつかん", desc:"よく動く死体", cs_url:"https://www.pixiv.net/artworks/145349822", active:true },
+  { room:"room-h", icon:"🌇", name:"マリア・ヴァレンタイン", reading:"まりあ・ゔぁれんたいん", desc:"せわしないお兄さん", cs_url:"https://www.pixiv.net/artworks/145350554", active:true },
+
 ];
 
 // ---- 来館者 ----
@@ -883,6 +893,7 @@ const VISITORS = [
 
 // ---- 館長日誌 ----
 const JOURNAL = [
+  { date:"2026.06.03", cat:"memo",  title:"改修",     body:"サイトの改修したよ", footer:"" },
   { date:"2026.05.25", cat:"memo",  title:"ねこ",     body:"ねこ飼うことになったよ", footer:"" },
   { date:"2026.05.16", cat:"book",  title:"人の財布〜高畑朋子の場合〜", body:"読了。ぶっちゃけ祭歌の国ハルヴァニアの方が怖い。怖すぎる。数日ビクついてた", footer:"著者 第四境界/藤沢仁" },
   { date:"2026.05.16", cat:"memo",  title:"シナイドリ", body:"シナイドリのぬいぐるみが届いた！！めっちゃでかい！！かわいい〜〜！", footer:"" },
