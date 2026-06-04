@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>さかなにえさをあげよう！ | 旧淵ノ海遊館</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rounded+Mplus+1c:wght@400;700;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky:    #b8eaf5;
+  --sky2:   #d6f4fd;
+  --ocean1: #4ec9e8;
+  --ocean2: #1a9bbf;
+  --ocean3: #0d6e8a;
+  --deep:   #0a4a60;
+  --foam:   #ffffff;
+  --sand:   #f5e6c8;
+  --coral:  #ff8c6b;
+  --coral2: #ff6b9d;
+  --yellow: #ffe566;
+  --mint:   #7ef5c8;
+  --text:   #1a3a4a;
+  --text-m: rgba(26,58,74,0.6);
+  --round:  'Rounded Mplus 1c', sans-serif;
+  --body:   'Noto Sans JP', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  background: var(--sky2);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E🐟%3C/text%3E%3C/svg%3E") 16 16, auto;
+}
+
+/* ===================== 背景 ===================== */
+.bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+
+/* 空グラデーション */
+.bg-sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    #c8f0ff 0%,
+    #a8e4f8 20%,
+    #7dd4f0 35%,
+    #4ec9e8 50%,
+    #1a9bbf 65%,
+    #0d6e8a 80%,
+    #0a4a60 100%
+  );
+}
+
+/* 雲 */
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 999px;
+  opacity: 0.75;
+  filter: blur(2px);
+  animation: cloudDrift linear infinite;
+}
+.cloud::before, .cloud::after {
+  content: ''; position: absolute;
+  background: white; border-radius: 999px;
+}
+.cloud.c1 { width:120px; height:40px; top:6%; left:-130px; animation-duration:40s; animation-delay:0s; }
+.cloud.c1::before { width:70px; height:55px; top:-30px; left:20px; }
+.cloud.c1::after  { width:50px; height:45px; top:-20px; left:55px; }
+.cloud.c2 { width:90px; height:30px; top:12%; left:-100px; animation-duration:55s; animation-delay:15s; opacity:0.5; }
+.cloud.c2::before { width:55px; height:45px; top:-25px; left:15px; }
+.cloud.c3 { width:150px; height:50px; top:4%; left:-160px; animation-duration:35s; animation-delay:8s; opacity:0.65; }
+.cloud.c3::before { width:80px; height:65px; top:-38px; left:25px; }
+.cloud.c3::after  { width:60px; height:50px; top:-28px; left:75px; }
+@keyframes cloudDrift { 0%{transform:translateX(0)} 100%{transform:translateX(calc(100vw + 200px))} }
+
+/* 光の反射 */
+.light-rays {
+  position: absolute; top: 0; left: 0; right: 0; height: 60%;
+  background:
+    repeating-linear-gradient(
+      -20deg,
+      transparent 0px,
+      transparent 40px,
+      rgba(255,255,255,0.04) 40px,
+      rgba(255,255,255,0.04) 80px
+    );
+  animation: rayShift 8s ease-in-out infinite alternate;
+}
+@keyframes rayShift { 0%{transform:skewX(0deg) translateX(0)} 100%{transform:skewX(3deg) translateX(20px)} }
+
+/* 泡 */
+.bubble {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.6), rgba(255,255,255,0.1));
+  border: 1.5px solid rgba(255,255,255,0.4);
+  animation: bubbleRise linear infinite;
+}
+.bubble.b1 { width:10px; height:10px; left:12%; animation-duration:8s;  animation-delay:0s;   bottom:-20px; }
+.bubble.b2 { width:6px;  height:6px;  left:28%; animation-duration:11s; animation-delay:3s;   bottom:-20px; }
+.bubble.b3 { width:14px; height:14px; left:50%; animation-duration:9s;  animation-delay:1s;   bottom:-20px; }
+.bubble.b4 { width:8px;  height:8px;  left:70%; animation-duration:13s; animation-delay:5s;   bottom:-20px; }
+.bubble.b5 { width:5px;  height:5px;  left:85%; animation-duration:7s;  animation-delay:2s;   bottom:-20px; }
+@keyframes bubbleRise {
+  0%   { transform: translateX(0) translateY(0); opacity:0; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateX(20px) translateY(-100vh); opacity:0; }
+}
+
+/* 水面ライン */
+.water-surface {
+  position: absolute; top: 48%; left: 0; right: 0; height: 6px;
+  background: linear-gradient(90deg,
+    transparent, rgba(255,255,255,0.5), rgba(255,255,255,0.8),
+    rgba(255,255,255,0.3), rgba(255,255,255,0.6), transparent
+  );
+  filter: blur(1px);
+  animation: surfaceWave 4s ease-in-out infinite;
+}
+@keyframes surfaceWave {
+  0%,100% { transform: scaleX(1) translateY(0); opacity:0.6; }
+  50% { transform: scaleX(1.02) translateY(-2px); opacity:1; }
+}
+
+/* 海底の砂 */
+.seabed {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(180deg, transparent, rgba(245,230,200,0.3) 40%, rgba(220,200,160,0.5) 100%);
+  border-radius: 60% 60% 0 0 / 20px 20px 0 0;
+}
+
+/* 珊瑚・海草 */
+.seaplant {
+  position: absolute; bottom: 0;
+  animation: sway 3s ease-in-out infinite;
+  transform-origin: bottom center;
+  font-size: 32px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+.seaplant.p1 { left: 5%;  animation-delay: 0s;   font-size: 40px; }
+.seaplant.p2 { left: 15%; animation-delay: 0.7s; font-size: 28px; }
+.seaplant.p3 { left: 22%; animation-delay: 1.4s; }
+.seaplant.p4 { right:18%; animation-delay: 0.3s; font-size: 38px; }
+.seaplant.p5 { right:8%;  animation-delay: 1s;   font-size: 26px; }
+.seaplant.p6 { right:25%; animation-delay: 1.8s; }
+.seaplant.p7 { left: 45%; animation-delay: 0.5s; font-size: 24px; }
+@keyframes sway { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)} }
+
+/* ===================== ヘッダー ===================== */
+.site-header {
+  position: relative; z-index: 50;
+  padding: 0.8rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.back-btn {
+  font-family: var(--round); font-size: 12px; letter-spacing: 1px;
+  background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+  border: 2px solid rgba(255,255,255,0.8); border-radius: 999px;
+  color: var(--ocean3); cursor: pointer; padding: 5px 14px;
+  text-decoration: none; transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.back-btn:hover { background: white; transform: translateY(-1px); }
+
+.header-title {
+  font-family: var(--round); font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0 2px 8px rgba(0,80,120,0.3);
+}
+.closed-notice {
+  margin-left: auto;
+  font-family: var(--round); font-size: 10px; letter-spacing: 1px;
+  background: rgba(255,200,100,0.25); backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,200,100,0.4); border-radius: 999px;
+  color: rgba(180,120,20,0.8); padding: 4px 12px;
+}
+
+/* ===================== メインコンテンツ ===================== */
+.main-wrap {
+  position: relative; z-index: 10;
+  max-width: 680px; margin: 0 auto;
+  padding: 0 1rem 4rem;
+}
+
+/* タイトルボード */
+.title-board {
+  text-align: center; margin-bottom: 1.5rem;
+  position: relative;
+}
+.title-board-inner {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
+  backdrop-filter: blur(12px);
+  border: 3px solid rgba(255,255,255,0.9);
+  border-radius: 24px;
+  padding: 1rem 2.5rem;
+  box-shadow: 0 8px 32px rgba(0,80,120,0.15), 0 2px 8px rgba(255,255,255,0.5) inset;
+  position: relative; overflow: hidden;
+}
+.title-board-inner::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, var(--coral2), var(--yellow), var(--mint), var(--ocean1), var(--coral2));
+  background-size: 200%;
+  animation: rainbowBar 3s linear infinite;
+}
+@keyframes rainbowBar { 0%{background-position:0%} 100%{background-position:200%} }
+.title-main {
+  font-family: var(--round); font-size: 32px; font-weight: 800; letter-spacing: 3px;
+  color: var(--ocean3);
+  text-shadow: 0 2px 0 rgba(255,255,255,0.8), 0 4px 12px rgba(0,80,120,0.2);
+  display: block; line-height: 1.2;
+}
+.title-sub {
+  font-family: var(--round); font-size: 11px; letter-spacing: 2px;
+  color: var(--text-m); margin-top: 0.2rem; display: block;
+}
+
+/* ゲームエリア */
+.game-area {
+  position: relative;
+  background: linear-gradient(180deg,
+    rgba(78,201,232,0.3) 0%,
+    rgba(26,155,191,0.4) 40%,
+    rgba(13,110,138,0.5) 100%
+  );
+  backdrop-filter: blur(4px);
+  border: 3px solid rgba(255,255,255,0.5);
+  border-radius: 28px;
+  height: 340px; overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,80,120,0.25), 0 2px 8px rgba(255,255,255,0.4) inset;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E🍙%3C/text%3E%3C/svg%3E") 16 16, pointer;
+}
+
+/* 水中グラデーション */
+.tank-water {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(150,230,255,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 20% 50%, rgba(100,200,240,0.1) 0%, transparent 50%);
+  animation: waterShimmer 6s ease-in-out infinite alternate;
+}
+@keyframes waterShimmer { 0%{opacity:0.6} 100%{opacity:1} }
+
+/* 魚たち */
+.fish {
+  position: absolute;
+  font-size: 36px;
+  cursor: inherit;
+  animation: swim linear infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  user-select: none;
+  transition: transform 0.15s;
+}
+.fish:hover { transform: scale(1.3) !important; }
+.fish.left  { animation-direction: normal; }
+.fish.right { animation-name: swimRight; }
+
+.fish.f1 { font-size:42px; top:25%; animation-duration:9s;  animation-delay:0s;   }
+.fish.f2 { font-size:28px; top:55%; animation-duration:12s; animation-delay:2s;   }
+.fish.f3 { font-size:48px; top:40%; animation-duration:8s;  animation-delay:4s;   }
+.fish.f4 { font-size:24px; top:70%; animation-duration:14s; animation-delay:1s;   }
+.fish.f5 { font-size:32px; top:15%; animation-duration:11s; animation-delay:6s;   }
+.fish.f6 { font-size:20px; top:80%; animation-duration:10s; animation-delay:3s;   }
+.fish.f7 { font-size:38px; top:50%; animation-duration:13s; animation-delay:7s;   }
+
+@keyframes swim {
+  0%   { left: -80px; }
+  100% { left: calc(100% + 80px); }
+}
+@keyframes swimRight {
+  0%   { left: calc(100% + 80px); transform: scaleX(-1); }
+  100% { left: -80px; transform: scaleX(-1); }
+}
+
+/* えさ */
+.food {
+  position: absolute;
+  font-size: 20px;
+  pointer-events: none;
+  animation: foodFall 2.5s ease-in forwards;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+@keyframes foodFall {
+  0%   { transform: translateY(0) rotate(0deg); opacity:1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(280px) rotate(180deg); opacity:0; }
+}
+
+/* 食べたときのエフェクト */
+.nom-effect {
+  position: absolute;
+  font-size: 28px;
+  pointer-events: none;
+  animation: nomPop 0.8s ease-out forwards;
+}
+@keyframes nomPop {
+  0%   { transform: scale(0) translateY(0); opacity:1; }
+  50%  { transform: scale(1.4) translateY(-15px); opacity:1; }
+  100% { transform: scale(0.8) translateY(-30px); opacity:0; }
+}
+
+/* タンク底の砂 */
+.tank-sand {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 45px;
+  background: linear-gradient(180deg, transparent, rgba(245,225,185,0.6) 40%, rgba(220,195,145,0.8) 100%);
+  border-radius: 0 0 24px 24px;
+}
+.tank-plant {
+  position: absolute; bottom: 0;
+  font-size: 28px;
+  animation: sway 3s ease-in-out infinite;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.1));
+}
+.tank-plant.tp1 { left:8%;  animation-delay:0s;   font-size:36px; }
+.tank-plant.tp2 { left:18%; animation-delay:1s;   font-size:24px; }
+.tank-plant.tp3 { right:12%;animation-delay:0.5s; font-size:32px; }
+.tank-plant.tp4 { right:22%;animation-delay:1.5s; font-size:22px; }
+.tank-plant.tp5 { left:42%; animation-delay:0.8s; font-size:20px; }
+
+/* ===================== スコアパネル ===================== */
+.score-panel {
+  display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+  margin-top: 1rem; flex-wrap: wrap;
+}
+.score-box {
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.9);
+  border-radius: 16px; padding: 0.7rem 1.5rem; text-align: center;
+  box-shadow: 0 4px 16px rgba(0,80,120,0.12);
+  min-width: 100px;
+}
+.score-label {
+  font-family: var(--round); font-size: 10px; letter-spacing: 2px; color: var(--text-m); margin-bottom: 2px;
+}
+.score-val {
+  font-family: var(--round); font-size: 28px; font-weight: 800; color: var(--ocean3);
+  line-height: 1;
+}
+.score-val.happy { color: var(--coral); }
+
+/* えさボタン */
+.feed-hint {
+  text-align: center; margin-top: 0.8rem;
+  font-family: var(--round); font-size: 12px; letter-spacing: 1px;
+  color: rgba(255,255,255,0.7);
+  text-shadow: 0 1px 4px rgba(0,80,120,0.3);
+}
+
+/* ===================== 説明パネル ===================== */
+.how-to {
+  margin-top: 1.5rem;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(255,255,255,0.85);
+  border-radius: 20px; padding: 1.2rem 1.8rem;
+  box-shadow: 0 6px 24px rgba(0,80,120,0.1);
+}
+.how-to-title {
+  font-family: var(--round); font-size: 14px; font-weight: 800; letter-spacing: 2px;
+  color: var(--ocean3); margin-bottom: 0.7rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.how-to-body {
+  font-family: var(--round); font-size: 12px; letter-spacing: 1px; line-height: 2;
+  color: var(--text);
+}
+.how-to-body li { list-style: none; padding-left: 1.4rem; position: relative; }
+.how-to-body li::before { content: '🐠'; position: absolute; left: 0; font-size: 12px; }
+
+/* さかな図鑑 */
+.fish-guide {
+  margin-top: 1.2rem;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(255,255,255,0.85);
+  border-radius: 20px; padding: 1.2rem 1.8rem;
+  box-shadow: 0 6px 24px rgba(0,80,120,0.1);
+}
+.fish-guide-title {
+  font-family: var(--round); font-size: 14px; font-weight: 800; letter-spacing: 2px;
+  color: var(--ocean3); margin-bottom: 0.8rem;
+}
+.fish-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px;
+}
+.fish-card {
+  background: rgba(255,255,255,0.6); border: 1.5px solid rgba(255,255,255,0.8);
+  border-radius: 14px; padding: 0.7rem 0.5rem; text-align: center;
+  transition: all 0.2s;
+}
+.fish-card:hover { transform: translateY(-3px) scale(1.04); background: rgba(255,255,255,0.85); }
+.fish-card-icon { font-size: 30px; margin-bottom: 3px; }
+.fish-card-name {
+  font-family: var(--round); font-size: 10px; letter-spacing: 1px; color: var(--ocean3); font-weight: 700;
+}
+.fish-card-desc { font-size: 9px; color: var(--text-m); margin-top: 1px; line-height: 1.4; }
+
+/* ===================== フッター ===================== */
+.site-footer {
+  position: relative; z-index: 10; text-align: center; padding: 1.2rem;
+  font-family: var(--round); font-size: 10px; letter-spacing: 2px;
+  color: rgba(255,255,255,0.5);
+  text-shadow: 0 1px 4px rgba(0,80,120,0.3);
+}
+
+/* ===================== レスポンシブ ===================== */
+@media (max-width: 560px) {
+  .title-main { font-size: 24px; }
+  .game-area { height: 280px; }
+  .fish.f1 { font-size:32px; }
+  .fish.f3 { font-size:36px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 背景 -->
+<div class="bg">
+  <div class="bg-sky"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+  <div class="light-rays"></div>
+  <div class="water-surface"></div>
+  <div class="bubble b1"></div>
+  <div class="bubble b2"></div>
+  <div class="bubble b3"></div>
+  <div class="bubble b4"></div>
+  <div class="bubble b5"></div>
+  <div class="seabed"></div>
+  <div class="seaplant p1">🪸</div>
+  <div class="seaplant p2">🌿</div>
+  <div class="seaplant p3">🪨</div>
+  <div class="seaplant p4">🪸</div>
+  <div class="seaplant p5">🌿</div>
+  <div class="seaplant p6">🪨</div>
+  <div class="seaplant p7">🌊</div>
+</div>
+
+<!-- ヘッダー -->
+<header class="site-header">
+  <a href="../" class="back-btn">← もどる</a>
+  <span class="header-title">旧淵ノ海遊館</span>
+  <span class="closed-notice">⚠ 臨時閉館中</span>
+</header>
+
+<main class="main-wrap">
+
+  <!-- タイトル -->
+  <div class="title-board">
+    <div class="title-board-inner">
+      <span class="title-main">🐠 さかなにえさをあげよう！</span>
+      <span class="title-sub">Fuchino Aquarium — Kids Corner</span>
+    </div>
+  </div>
+
+  <!-- ゲームエリア -->
+  <div class="game-area" id="game-area">
+    <div class="tank-water"></div>
+
+    <!-- 魚 -->
+    <div class="fish f1 left"  data-name="マグロくん">🐟</div>
+    <div class="fish f2 right" data-name="フグちゃん">🐡</div>
+    <div class="fish f3 left"  data-name="サメさん">🦈</div>
+    <div class="fish f4 right" data-name="タコちゃん">🐙</div>
+    <div class="fish f5 left"  data-name="クラゲさん">🪼</div>
+    <div class="fish f6 right" data-name="カニくん">🦀</div>
+    <div class="fish f7 left"  data-name="イルカさん">🐬</div>
+
+    <!-- タンク底 -->
+    <div class="tank-sand"></div>
+    <div class="tank-plant tp1">🪸</div>
+    <div class="tank-plant tp2">🌿</div>
+    <div class="tank-plant tp3">🪸</div>
+    <div class="tank-plant tp4">🌿</div>
+    <div class="tank-plant tp5">🪨</div>
+  </div>
+
+  <!-- スコア -->
+  <div class="score-panel">
+    <div class="score-box">
+      <div class="score-label">あげたえさ</div>
+      <div class="score-val" id="feed-count">0</div>
+    </div>
+    <div class="score-box">
+      <div class="score-label">よろこび</div>
+      <div class="score-val happy" id="happy-count">🐟</div>
+    </div>
+    <div class="score-box">
+      <div class="score-label">おなかいっぱい</div>
+      <div class="score-val" id="full-count">0</div>
+    </div>
+  </div>
+
+  <div class="feed-hint">水槽をクリック（タップ）するとえさをあげられるよ！🍙</div>
+
+  <!-- 遊び方 -->
+  <div class="how-to">
+    <div class="how-to-title">🎮 あそびかた</div>
+    <ul class="how-to-body">
+      <li>水槽のなかをクリック（タップ）するとえさがおちるよ</li>
+      <li>さかながえさをたべるとよろこぶよ！</li>
+      <li>たくさんたべると「おなかいっぱい」がふえるよ</li>
+      <li>いろんなさかなをかんさつしてみよう🔍</li>
+    </ul>
+  </div>
+
+  <!-- さかな図鑑 -->
+  <div class="fish-guide">
+    <div class="fish-guide-title">🐠 さかな図鑑</div>
+    <div class="fish-grid">
+      <div class="fish-card">
+        <div class="fish-card-icon">🐟</div>
+        <div class="fish-card-name">マグロくん</div>
+        <div class="fish-card-desc">はやくおよぐのがとくい</div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-icon">🐡</div>
+        <div class="fish-card-name">フグちゃん</div>
+        <div class="fish-card-desc">ふくらむのがとくい</div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-icon">🦈</div>
+        <div class="fish-card-name">サメさん</div>
+        <div class="fish-card-desc">いちばんおおきい</div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-icon">🐙</div>
+        <div class="fish-card-name">タコちゃん</div>
+        <div class="fish-card-desc">あしが8ぽんある</div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-icon">🪼</div>
+        <div class="fish-card-name">クラゲさん</div>
+        <div class="fish-card-desc">ふわふわただよう</div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-icon">🦀</div>
+        <div class="fish-card-name">カニくん</div>
+        <div class="fish-card-desc">よこあるきがとくい</div>
+      </div>
+      <div class="fish-card">
+        <div class="fish-card-icon">🐬</div>
+        <div class="fish-card-name">イルカさん</div>
+        <div class="fish-card-desc">ジャンプがとくい</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  旧淵ノ海遊館　きっずコーナー　© 2026
+</footer>
+
+<script>
+const gameArea = document.getElementById('game-area');
+let feedCount = 0;
+let fullCount  = 0;
+const happyEmojis = ['🐟','🐟🐟','🐟🐟🐟','🥰','🥰🥰','🤩','🤩🤩','💖','💖💖','🎉'];
+
+const foodEmojis = ['🍙','🦐','🐚','🦑','🍤','🦞','🐾'];
+
+function spawnFood(x, y) {
+  const food = document.createElement('div');
+  food.className = 'food';
+  food.textContent = foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
+  food.style.left = (x - 16) + 'px';
+  food.style.top  = (y - 16) + 'px';
+  gameArea.appendChild(food);
+
+  feedCount++;
+  document.getElementById('feed-count').textContent = feedCount;
+  document.getElementById('happy-count').textContent = happyEmojis[Math.min(feedCount - 1, happyEmojis.length - 1)];
+
+  // 魚が食べるかチェック
+  setTimeout(() => {
+    const fishes = gameArea.querySelectorAll('.fish');
+    fishes.forEach(fish => {
+      const fishRect = fish.getBoundingClientRect();
+      const areaRect = gameArea.getBoundingClientRect();
+      const fishX = fishRect.left - areaRect.left + fishRect.width / 2;
+      const fishY = fishRect.top  - areaRect.top  + fishRect.height / 2;
+      const dist  = Math.sqrt((fishX - x) ** 2 + (fishY - y) ** 2);
+      if (dist < 100) {
+        spawnNom(fishX, fishY);
+        fullCount++;
+        document.getElementById('full-count').textContent = fullCount;
+      }
+    });
+    food.remove();
+  }, 1200);
+
+  setTimeout(() => { if (food.parentNode) food.remove(); }, 2600);
+}
+
+function spawnNom(x, y) {
+  const nom = document.createElement('div');
+  nom.className = 'nom-effect';
+  nom.textContent = ['😋','🥰','✨','💕','🌟'][Math.floor(Math.random() * 5)];
+  nom.style.left = (x - 16) + 'px';
+  nom.style.top  = (y - 30) + 'px';
+  gameArea.appendChild(nom);
+  setTimeout(() => nom.remove(), 900);
+}
+
+gameArea.addEventListener('click', e => {
+  const rect = gameArea.getBoundingClientRect();
+  spawnFood(e.clientX - rect.left, e.clientY - rect.top);
+});
+
+gameArea.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const rect = gameArea.getBoundingClientRect();
+  const touch = e.touches[0];
+  spawnFood(touch.clientX - rect.left, touch.clientY - rect.top);
+}, { passive: false });
+</script>
+</body>
+</html>
