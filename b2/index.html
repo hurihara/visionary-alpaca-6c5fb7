@@ -1,1 +1,831 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旧淵ノ海遊館 — 地下二階</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400&family=Josefin+Sans:ital,wght@0,100;0,300;1,100&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080c10;
+  --bg2:     #0a0f14;
+  --ink:     #c8d8dc;
+  --ink-m:   rgba(200,216,220,0.45);
+  --ink-f:   rgba(200,216,220,0.2);
+  --ink-ff:  rgba(200,216,220,0.08);
+  --teal:    #2a7a8a;
+  --teal-d:  rgba(42,122,138,0.12);
+  --teal-f:  rgba(42,122,138,0.06);
+  --border:  rgba(42,122,138,0.12);
+  --border-s:rgba(42,122,138,0.25);
+  --warn:    rgba(180,140,90,0.6);
+  --red:     rgba(180,60,60,0.5);
+  --serif:   'Shippori Mincho', serif;
+  --sans:    'Noto Sans JP', sans-serif;
+  --latin:   'Josefin Sans', sans-serif;
+  --r:       10px;
+}
 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 6rem;
+}
+
+/* ===================== 背景 ===================== */
+.bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.bg-base {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(10,25,35,0.9) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 60% at 50% 100%, rgba(5,10,15,1) 0%, transparent 70%),
+    linear-gradient(180deg, #080c10 0%, #06090d 50%, #080c10 100%);
+}
+
+/* 水滴テクスチャ */
+.drip {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, rgba(42,122,138,0.15), transparent);
+  border: 1px solid rgba(42,122,138,0.06);
+  animation: dripFloat ease-in-out infinite;
+}
+.drip.d1 { width:180px; height:260px; left:5%;  top:10%; animation-duration:18s; animation-delay:0s; }
+.drip.d2 { width:120px; height:180px; right:8%; top:30%; animation-duration:22s; animation-delay:5s; }
+.drip.d3 { width:200px; height:140px; left:30%; bottom:20%; animation-duration:16s; animation-delay:8s; }
+@keyframes dripFloat {
+  0%,100% { transform: translateY(0) scale(1); opacity: 0.4; }
+  50%      { transform: translateY(-20px) scale(1.05); opacity: 0.7; }
+}
+
+/* ノイズ */
+.noise {
+  position: absolute; inset: 0; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* 水流ライン */
+.flow-lines {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.flow-line {
+  position: absolute; width: 1px; background: linear-gradient(transparent, rgba(42,122,138,0.15), transparent);
+  animation: flowDown linear infinite;
+}
+.flow-line:nth-child(1) { left:15%; height:40%; top:-40%; animation-duration:12s; animation-delay:0s; }
+.flow-line:nth-child(2) { left:35%; height:60%; top:-60%; animation-duration:18s; animation-delay:4s; }
+.flow-line:nth-child(3) { left:55%; height:30%; top:-30%; animation-duration:10s; animation-delay:7s; }
+.flow-line:nth-child(4) { left:75%; height:50%; top:-50%; animation-duration:15s; animation-delay:2s; }
+.flow-line:nth-child(5) { left:88%; height:45%; top:-45%; animation-duration:20s; animation-delay:9s; }
+@keyframes flowDown { 0%{transform:translateY(0)} 100%{transform:translateY(200vh)} }
+
+/* グリッチ */
+@keyframes glitch {
+  0%,92%,100% { clip-path:none; transform:none; opacity:1; }
+  93% { clip-path:polygon(0 30%,100% 30%,100% 34%,0 34%); transform:translateX(-4px); opacity:0.8; }
+  95% { clip-path:polygon(0 55%,100% 55%,100% 58%,0 58%); transform:translateX(4px); opacity:0.8; }
+  97% { clip-path:polygon(0 70%,100% 70%,100% 73%,0 73%); transform:translateX(-2px); opacity:0.9; }
+}
+@keyframes textFlicker {
+  0%,96%,100% { opacity:1; }
+  97% { opacity:0.3; }
+  98% { opacity:0.8; }
+  99% { opacity:0.2; }
+}
+
+/* ===================== 警告バー ===================== */
+.warn-bar {
+  position: sticky; top:0; z-index:100;
+  background: rgba(6,9,13,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(180,140,90,0.15);
+  padding: 0.45rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+  animation: textFlicker 20s infinite;
+}
+.warn-bar-text {
+  font-family: var(--latin); font-size: 10px; letter-spacing: 3px; font-weight: 100;
+  color: var(--warn); flex: 1;
+}
+.warn-bar-sub {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 2px;
+  color: rgba(180,140,90,0.3); flex-shrink: 0;
+}
+
+/* ===================== ヘッダー ===================== */
+.site-header {
+  position: relative; z-index:50;
+  background: rgba(6,9,13,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 860px; margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.logo-wrap { flex-shrink:0; }
+.logo-jp {
+  font-family: var(--serif); font-size: 18px; letter-spacing: 5px; font-weight: 500;
+  color: var(--ink-m); display: block; line-height:1;
+  animation: glitch 15s infinite;
+}
+.logo-floor {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 4px; font-weight: 100;
+  color: var(--teal); opacity: 0.5; display: block; margin-top: 3px; font-style: italic;
+}
+
+.main-nav { display:flex; gap:1px; margin-left:auto; flex-wrap:wrap; justify-content:flex-end; }
+.nav-btn {
+  font-family: var(--serif); font-size: 12px; letter-spacing: 2px; font-weight: 400;
+  background: none; border: none; color: var(--ink-f); cursor: pointer;
+  padding: 6px 12px; border-radius: 6px; transition: all 0.2s; white-space: nowrap;
+}
+.nav-btn:hover { color: var(--ink-m); background: var(--teal-f); }
+.nav-btn.active { color: var(--ink-m); background: var(--teal-f); border: 1px solid var(--border); }
+
+/* ===================== レイアウト ===================== */
+.main-wrap {
+  position: relative; z-index:10;
+  max-width: 860px; margin: 0 auto;
+  padding: 3rem 1.5rem 8rem;
+}
+.page { display:none; }
+.page.active { display:block; animation: fadeIn 0.6s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+.page-header { margin-bottom: 2.5rem; }
+.page-eyebrow {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 5px; font-weight: 100;
+  color: var(--teal); opacity: 0.5; margin-bottom: 0.5rem; font-style: italic;
+}
+.page-title {
+  font-family: var(--serif); font-size: 34px; letter-spacing: 7px; font-weight: 600;
+  color: var(--ink-m); line-height: 1;
+  animation: textFlicker 30s infinite;
+}
+.page-rule {
+  margin-top: 1rem; height: 1px;
+  background: linear-gradient(90deg, rgba(42,122,138,0.3), transparent);
+}
+.page-sub { font-family: var(--latin); font-size: 10px; letter-spacing: 2px; color: var(--ink-ff); margin-top: 0.6rem; font-weight: 100; }
+
+/* パネル */
+.panel {
+  background: rgba(10,15,20,0.6);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  position: relative; overflow: hidden;
+}
+.panel::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(42,122,138,0.2), transparent);
+}
+
+/* ===================== 案内ページ ===================== */
+.doc-stack { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* 公式っぽい文書 */
+.doc {
+  padding: 2rem 2.5rem;
+  position: relative;
+}
+.doc-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 1.5rem; padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap; gap: 0.5rem;
+}
+.doc-title {
+  font-family: var(--serif); font-size: 13px; letter-spacing: 3px; color: var(--ink-m);
+}
+.doc-no {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--ink-ff); font-weight: 100;
+}
+.doc-body {
+  font-family: var(--serif); font-size: 12.5px; letter-spacing: 1px; line-height: 2.2;
+  color: var(--ink-m);
+}
+.doc-body p { margin-bottom: 0.8rem; }
+.doc-body .redacted {
+  background: var(--ink-m); color: transparent; border-radius: 2px;
+  user-select: none; letter-spacing: 0;
+  display: inline-block; min-width: 60px;
+}
+.doc-body .faded { color: var(--ink-ff); }
+.doc-body .odd { color: var(--ink-m); font-style: italic; }
+.doc-stamp {
+  position: absolute; right: 2rem; bottom: 1.5rem;
+  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; font-weight: 100;
+  color: rgba(180,60,60,0.3); border: 1px solid rgba(180,60,60,0.2);
+  padding: 4px 12px; border-radius: 3px; transform: rotate(-8deg);
+}
+
+/* メモ */
+.memo {
+  padding: 1.5rem 2rem; border-left: 2px solid rgba(42,122,138,0.2);
+  margin-left: 1rem;
+}
+.memo-from {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; color: var(--ink-ff);
+  margin-bottom: 0.7rem; font-weight: 100;
+}
+.memo-body {
+  font-family: var(--serif); font-size: 12px; letter-spacing: 1px; line-height: 2;
+  color: var(--ink-m);
+}
+.memo-body .emphasis { color: var(--ink); }
+
+/* 放送ログ */
+.broadcast-log { padding: 1.5rem 2rem; }
+.broadcast-header {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; color: var(--ink-ff);
+  margin-bottom: 1rem; font-weight: 100; font-style: italic;
+}
+.broadcast-entry {
+  display: flex; gap: 1.5rem; margin-bottom: 0.7rem; align-items: baseline;
+}
+.bc-time {
+  font-family: var(--latin); font-size: 10px; letter-spacing: 1px; color: var(--ink-ff);
+  flex-shrink: 0; font-weight: 100;
+}
+.bc-text {
+  font-family: var(--serif); font-size: 12px; letter-spacing: 1px; line-height: 1.8;
+  color: var(--ink-m);
+}
+.bc-text.anomaly { color: var(--ink); animation: textFlicker 8s infinite; }
+.bc-text.missing { color: var(--ink-ff); font-style: italic; }
+
+/* 最後のページ */
+.last-entry { padding: 2rem 2.5rem; }
+.last-date {
+  font-family: var(--latin); font-size: 10px; letter-spacing: 3px; color: var(--ink-ff);
+  margin-bottom: 1rem; font-weight: 100; font-style: italic;
+}
+.last-body {
+  font-family: var(--serif); font-size: 13px; letter-spacing: 1.5px; line-height: 2.4;
+  color: var(--ink-m);
+}
+.last-body .trail {
+  display: inline-block;
+  animation: trailFade 4s ease-in-out infinite;
+}
+@keyframes trailFade { 0%,100%{opacity:0.2} 50%{opacity:0.6} }
+
+/* ===================== 記録ページ ===================== */
+.record-note {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; color: var(--ink-ff);
+  margin-bottom: 1.5rem; font-weight: 100; font-style: italic; padding: 0 0.5rem;
+}
+.record-list { display: flex; flex-direction: column; }
+.record-item {
+  display: flex; align-items: center; gap: 1.2rem;
+  padding: 0.9rem 1.3rem;
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.record-item:last-child { border-bottom: none; }
+.record-item:hover { background: rgba(42,122,138,0.03); }
+.record-no {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--ink-ff);
+  flex-shrink: 0; width: 36px; font-weight: 100;
+}
+.record-name {
+  font-family: var(--serif); font-size: 15px; letter-spacing: 2px; color: var(--ink-m);
+  flex: 1;
+}
+.record-name.corrupt {
+  color: var(--ink-ff);
+  animation: textFlicker 6s infinite;
+}
+.record-name.gone { color: var(--ink-ff); font-style: italic; }
+.record-date {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 1px; color: var(--ink-ff);
+  flex-shrink: 0; font-weight: 100;
+}
+.record-status {
+  font-family: var(--latin); font-size: 8px; letter-spacing: 2px;
+  padding: 2px 8px; border-radius: 3px; flex-shrink: 0; border: 1px solid;
+}
+.record-status.in     { color: rgba(42,180,138,0.5); border-color: rgba(42,180,138,0.15); }
+.record-status.out    { color: var(--ink-ff); border-color: var(--border); }
+.record-status.unk    { color: var(--warn); border-color: rgba(180,140,90,0.15); animation: textFlicker 5s infinite; }
+.record-status.error  { color: var(--red); border-color: rgba(180,60,60,0.15); }
+
+/* ===================== ノート ===================== */
+.board-tabs { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+.board-tab {
+  font-family: var(--serif); font-size: 12px; letter-spacing: 2px;
+  padding: 6px 16px; border-radius: 999px;
+  background: none; border: 1px solid var(--border);
+  color: var(--ink-f); cursor: pointer; transition: all 0.2s;
+}
+.board-tab.active { border-color: var(--border-s); color: var(--ink-m); background: var(--teal-f); }
+.board-panel { display: none; }
+.board-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+.canvas-wrap { padding: 1rem; margin-bottom: 1rem; }
+.canvas-label {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; color: var(--ink-ff);
+  margin-bottom: 0.7rem; font-weight: 100; font-style: italic;
+}
+#draw-canvas {
+  display: block; width: 100%; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #050810; cursor: crosshair; touch-action: none;
+}
+.tool-rows { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.tool-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tlbl { font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--ink-ff); font-weight: 100; }
+input[type=color] { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 5px; cursor: pointer; padding: 0; background: none; }
+input[type=range] { width: 70px; accent-color: var(--teal); }
+.tbtn {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 1.5px;
+  padding: 4px 11px; border-radius: 5px;
+  background: none; border: 1px solid var(--border);
+  color: var(--ink-ff); cursor: pointer; transition: all 0.2s;
+}
+.tbtn:hover { border-color: var(--border-s); color: var(--ink-m); }
+.tbtn.on { border-color: var(--border-s); color: var(--ink-m); background: var(--teal-f); }
+.dinput {
+  font-family: var(--sans); font-size: 11px;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 12px; color: var(--ink); outline: none; transition: 0.2s;
+}
+.dinput:focus { border-color: var(--border-s); }
+.dinput.wide { flex: 1; min-width: 0; }
+
+.text-form { padding: 1.3rem; margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
+.form-note {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--ink-ff);
+  font-weight: 100; font-style: italic; line-height: 1.8;
+}
+.tinput {
+  font-family: var(--sans); font-size: 12px; width: 100%;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 12px; color: var(--ink); outline: none; transition: 0.2s;
+}
+.tinput:focus { border-color: var(--border-s); }
+.tarea {
+  font-family: var(--sans); font-size: 12px; width: 100%; min-height: 80px; resize: vertical;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 6px; padding: 7px 12px; color: var(--ink); outline: none; transition: 0.2s;
+}
+.tarea:focus { border-color: var(--border-s); }
+.send-btn {
+  font-family: var(--serif); font-size: 12px; letter-spacing: 3px;
+  background: none; border: 1px solid var(--border-s);
+  border-radius: 6px; color: var(--ink-m); cursor: pointer; padding: 7px 20px; transition: all 0.2s; align-self: flex-start;
+}
+.send-btn:hover { background: var(--teal-f); }
+.status-line { font-family: var(--latin); font-size: 9px; color: var(--teal); min-height: 16px; letter-spacing: 2px; opacity: 0.7; }
+
+.posts { display: flex; flex-direction: column; gap: 0; }
+.post-item { padding: 1rem 1.3rem; border-bottom: 1px solid var(--border); }
+.post-item:last-child { border-bottom: none; }
+.post-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.post-name { font-family: var(--serif); font-size: 14px; letter-spacing: 2px; color: var(--ink-m); }
+.post-date { font-family: var(--latin); font-size: 9px; color: var(--ink-ff); letter-spacing: 2px; font-weight: 100; }
+.post-body { font-size: 12px; color: var(--ink-m); line-height: 1.8; }
+
+.recv-ttl {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 4px; color: var(--ink-ff);
+  margin: 1.5rem 0 0.8rem; font-weight: 100; font-style: italic;
+}
+.recv-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(145px,1fr)); gap: 8px; }
+.recv-item { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); transition: 0.2s; }
+.recv-item:hover { border-color: var(--border-s); }
+.recv-item img { width: 100%; display: block; filter: brightness(0.7) saturate(0.5); }
+.recv-item:hover img { filter: brightness(0.9) saturate(0.7); }
+.recv-info { padding: 0.45rem 0.65rem; }
+.recv-name { font-family: var(--serif); font-size: 12px; letter-spacing: 1px; color: var(--ink-m); }
+.recv-msg  { font-size: 10px; color: var(--ink-ff); margin-top: 1px; }
+.hint-txt  { font-family: var(--latin); font-size: 10px; color: var(--ink-ff); letter-spacing: 1px; font-weight: 100; }
+
+/* ===================== フッター ===================== */
+.site-footer {
+  position: relative; z-index:10; text-align: center; padding: 1.5rem;
+  border-top: 1px solid var(--border);
+  background: rgba(6,9,13,0.9);
+}
+.footer-txt {
+  font-family: var(--latin); font-size: 9px; letter-spacing: 4px; font-weight: 100;
+  color: var(--ink-ff); font-style: italic;
+  animation: textFlicker 25s infinite;
+}
+
+/* ===================== 入場エフェクト ===================== */
+.enter-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 1rem;
+  animation: overlayFade 3s ease forwards;
+}
+@keyframes overlayFade {
+  0%   { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+.enter-text {
+  font-family: var(--serif); font-size: 14px; letter-spacing: 6px; color: rgba(200,216,220,0.3);
+  animation: enterTextFade 3s ease forwards;
+}
+@keyframes enterTextFade {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ===================== レスポンシブ ===================== */
+@media (max-width: 600px) {
+  .logo-jp { font-size: 15px; }
+  .nav-btn { font-size: 11px; padding: 5px 8px; }
+  .page-title { font-size: 26px; }
+  .doc { padding: 1.5rem; }
+  .doc-body { font-size: 11.5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 入場エフェクト -->
+<div class="enter-overlay" id="enter-overlay">
+  <div class="enter-text">B 2 F</div>
+  <div class="enter-text" style="font-size:11px;letter-spacing:4px;animation-delay:0.5s">地　下　二　階</div>
+</div>
+
+<!-- 背景 -->
+<div class="bg">
+  <div class="bg-base"></div>
+  <div class="drip d1"></div>
+  <div class="drip d2"></div>
+  <div class="drip d3"></div>
+  <div class="noise"></div>
+  <div class="flow-lines">
+    <div class="flow-line"></div><div class="flow-line"></div>
+    <div class="flow-line"></div><div class="flow-line"></div>
+    <div class="flow-line"></div>
+  </div>
+</div>
+
+<!-- 警告バー -->
+<div class="warn-bar">
+  <span class="warn-bar-text">RESTRICTED AREA — B2F — 関係者以外立入禁止</span>
+  <span class="warn-bar-sub">水圧異常 / 監視継続中</span>
+</div>
+
+<!-- ヘッダー -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <span class="logo-jp">旧淵ノ海遊館</span>
+      <span class="logo-floor">— basement floor 2 —</span>
+    </div>
+    <nav class="main-nav" id="main-nav">
+      <button class="nav-btn active" data-page="info">案内</button>
+      <button class="nav-btn" data-page="record">記録</button>
+      <button class="nav-btn" data-page="note">ノート</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main-wrap">
+
+  <!-- ===== 案内 ===== -->
+  <section class="page active" id="page-info">
+    <div class="page-header">
+      <div class="page-eyebrow">Floor Guide — B2F</div>
+      <h1 class="page-title">地下二階</h1>
+      <div class="page-rule"></div>
+      <div class="page-sub">この階は施設図面には記載されていません</div>
+    </div>
+
+    <div class="doc-stack">
+
+      <!-- 施設点検報告書 -->
+      <div class="panel doc">
+        <div class="doc-header">
+          <div class="doc-title">施設点検報告書　第<span class="redacted">██</span>号</div>
+          <div class="doc-no">REP-2018-<span class="redacted">██</span> / CONFIDENTIAL</div>
+        </div>
+        <div class="doc-body">
+          <p>点検実施日：2018年<span class="redacted">██</span>月<span class="redacted">██</span>日</p>
+          <p>点検担当：設備管理部　<span class="redacted">████</span></p>
+          <p style="margin-top:1rem;">【B1F 点検結果】<br>
+          空調設備、排水設備ともに正常。水槽水圧は規定値内。照明設備の一部に交換が必要。詳細は別紙参照。</p>
+          <p>【B2F 点検結果】<br>
+          <span class="odd">当該フロアへの入室を3名で試みた。うち2名は入室を完了し、点検を実施。残る1名は</span><span class="redacted">████████████████</span></p>
+          <p class="faded">水音について：下方向から継続的な水音を確認。配管の問題と思われるが、音源の特定には至らなかった。次回点検時に再確認する。</p>
+          <p>【特記事項】<br>
+          <span class="redacted">████████████████████████████████</span><br>
+          なお、本報告書の内容は館長の承認なしに開示しないこと。</p>
+        </div>
+        <div class="doc-stamp">CLASSIFIED</div>
+      </div>
+
+      <!-- 設備担当メモ -->
+      <div class="panel memo">
+        <div class="memo-from">FROM : 設備管理部　宛先 : 館長室　/ 2018.11.03</div>
+        <div class="memo-body">
+          館長へ<br><br>
+          先日の件、ご報告が遅くなり申し訳ありません。<br><br>
+          B2の水音ですが、昨日また確認しました。<span class="emphasis">配管からではないと思います。</span>音が、なんというか、<span class="emphasis">規則的すぎる</span>のです。<br><br>
+          それと、もうひとつ。<br>
+          先週から毎朝、B2の入口の前に<span class="emphasis">足跡</span>があります。外から来たものではなく、<span class="emphasis">内側から出てきたような向き</span>をしています。<br><br>
+          報告書への記載は控えましたが、念のためお伝えしておきます。<br><br>
+          <span class="faded">——追記：この件について奥様には話さないでください</span>
+        </div>
+      </div>
+
+      <!-- 館内放送ログ -->
+      <div class="panel broadcast-log">
+        <div class="broadcast-header">館内放送　自動記録ログ / 2019.01.15</div>
+        <div class="broadcast-entry"><span class="bc-time">09:00</span><span class="bc-text">本日も旧淵ノ海遊館へご来館いただきありがとうございます。</span></div>
+        <div class="broadcast-entry"><span class="bc-time">10:30</span><span class="bc-text">深海エリアの入場制限を解除いたします。</span></div>
+        <div class="broadcast-entry"><span class="bc-time">11:47</span><span class="bc-text">地下二階のお客様は、係員の指示に従って速やかに——</span></div>
+        <div class="broadcast-entry"><span class="bc-time">11:47</span><span class="bc-text anomaly">地下二階のお客様は、係員の指示に従って速やかに——</span></div>
+        <div class="broadcast-entry"><span class="bc-time">11:47</span><span class="bc-text anomaly">地下二階のお客様は、係員の指示に従って速やかに——</span></div>
+        <div class="broadcast-entry"><span class="bc-time">11:49</span><span class="bc-text missing">（記録なし）</span></div>
+        <div class="broadcast-entry"><span class="bc-time">11:50</span><span class="bc-text missing">（記録なし）</span></div>
+        <div class="broadcast-entry"><span class="bc-time">12:00</span><span class="bc-text">お昼のお知らせです。館内レストランは——</span></div>
+        <div class="broadcast-entry"><span class="bc-time">18:00</span><span class="bc-text">本日の閉館時刻となりました。ご来館ありがとうございました。またのお越しをお待ちしております。</span></div>
+        <div class="broadcast-entry"><span class="bc-time">23:14</span><span class="bc-text anomaly">お客様、この先には進めません。お客様。</span></div>
+        <div class="broadcast-entry"><span class="bc-time">——</span><span class="bc-text missing">（以降の記録、ファイル破損）</span></div>
+      </div>
+
+      <!-- 飼育日誌最後のページ -->
+      <div class="panel last-entry">
+        <div class="last-date">飼育日誌　第14冊　最終ページ / 2019.03.16</div>
+        <div class="last-body">
+          今日も来た。<br><br>
+          下から呼ばれている気がするのは、もう慣れた。<br>
+          でも今日は違った。名前を呼ばれた。<br><br>
+          魚たちは元気だ。エサも食べている。水温も正常。<br>
+          何も問題はない。<br><br>
+          ただ、B2の扉が、今朝から開いている。<br>
+          誰も開けていないのに。<br><br>
+          館長には伝えた。「見なかったことにしろ」と言われた。<br><br>
+          少し、見てくる。<br><br>
+          <span class="trail">——すぐ戻る</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 記録 ===== -->
+  <section class="page" id="page-record">
+    <div class="page-header">
+      <div class="page-eyebrow">Visitor Records — B2F</div>
+      <h2 class="page-title">記録</h2>
+      <div class="page-rule"></div>
+    </div>
+    <div class="record-note">※ このページに記載された来館者の一部は、退館が確認されていません</div>
+    <div class="panel">
+      <div class="record-list" id="record-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== ノート ===== -->
+  <section class="page" id="page-note">
+    <div class="page-header">
+      <div class="page-eyebrow">Visitor's Note — B2F</div>
+      <h2 class="page-title">ノート</h2>
+      <div class="page-rule"></div>
+    </div>
+
+    <div class="board-tabs">
+      <button class="board-tab active" data-tab="draw">スケッチ</button>
+      <button class="board-tab" data-tab="text">書き込み</button>
+    </div>
+
+    <div class="board-panel active" id="board-draw">
+      <div class="panel canvas-wrap">
+        <div class="canvas-label">— ここで見たものを残してください —</div>
+        <canvas id="draw-canvas" width="560" height="300"></canvas>
+        <div class="tool-rows">
+          <div class="tool-row">
+            <span class="tlbl">Color</span>
+            <input type="color" id="pen-color" value="#7ab8cc">
+            <span class="tlbl">Size</span>
+            <input type="range" id="pen-size" min="1" max="20" value="3">
+            <button class="tbtn" id="eraser-btn">Eraser</button>
+            <button class="tbtn" id="clear-btn">Clear</button>
+          </div>
+          <div class="tool-row">
+            <input class="dinput" id="draw-name" placeholder="お名前（任意）" maxlength="20">
+            <input class="dinput wide" id="draw-msg" placeholder="ひとこと（任意）" maxlength="60">
+            <button class="send-btn" id="draw-send">残す</button>
+          </div>
+        </div>
+      </div>
+      <div id="draw-status" class="status-line"></div>
+      <div class="recv-ttl">— 残されたスケッチ —</div>
+      <div class="recv-grid" id="recv-grid">
+        <p class="hint-txt">Supabaseを設定すると表示されます</p>
+      </div>
+    </div>
+
+    <div class="board-panel" id="board-text">
+      <div class="panel text-form">
+        <div class="form-note">
+          ここに書き込んだ内容は記録されます。<br>
+          あなたの名前も、ここに来たことも。
+        </div>
+        <input class="tinput" id="text-name" placeholder="お名前" maxlength="20">
+        <textarea class="tarea" id="text-msg" placeholder="何を見ましたか。何を聞きましたか。" maxlength="300"></textarea>
+        <button class="send-btn" id="text-send">記録する</button>
+        <div id="text-status" class="status-line"></div>
+      </div>
+      <div class="panel posts" id="text-posts">
+        <p class="hint-txt" style="padding:1rem">Supabaseを設定すると表示されます</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span class="footer-txt">Fuchino Aquarium — B2F — このページは存在しません</span>
+</footer>
+
+<script>
+/* ================================================
+   ★★★ ここを編集してカスタマイズしてね ★★★
+   ================================================ */
+
+// ---- B2来館者記録（架空の人物のみ） ----
+// status: "in"=在館中 "out"=退館確認 "unk"=不明 "error"=エラー
+const RECORDS = [
+  { no:"B-001", name:"木下　朔",     date:"2018.06.12", status:"out",  label:"退館確認" },
+  { no:"B-002", name:"永瀬　文子",   date:"2018.08.03", status:"out",  label:"退館確認" },
+  { no:"B-003", name:"荒川　誠一",   date:"2018.09.19", status:"out",  label:"退館確認" },
+  { no:"B-004", name:"宮田　はるか", date:"2018.10.07", status:"out",  label:"退館確認" },
+  { no:"B-005", name:"小泉　龍之介", date:"2018.11.22", status:"unk",  label:"確認中" },
+  { no:"B-006", name:"遠藤　佐和子", date:"2018.12.01", status:"out",  label:"退館確認" },
+  { no:"B-007", name:"柴田　光",     date:"2019.01.08", status:"unk",  label:"確認中" },
+  { no:"B-008", name:"浜田　礼",     date:"2019.01.15", status:"unk",  label:"確認中" },
+  { no:"B-009", name:"中島　壮介",   date:"2019.02.03", status:"error",label:"ERROR" },
+  { no:"B-010", name:"岡田　",       date:"2019.02.17", status:"error",label:"ERROR" },
+  { no:"B-011", name:"",             date:"2019.03.——", status:"in",   label:"在館中" },
+  { no:"B-012", name:"",             date:"2019.03.——", status:"in",   label:"在館中" },
+  { no:"B-013", name:"",             date:"————.——.——", status:"in",   label:"在館中" },
+  { no:"——",   name:"あなた",        date:"今日",        status:"in",   label:"在館中" },
+];
+
+// ---- Supabase（掲示板を使う場合） ----
+// 表サイトと同じ設定でも、別テーブルを使えば独立します
+const SUPABASE_URL      = 'https://ictpdsgbclltmfskxrtc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljdHBkc2diY2xsdG1mc2t4cnRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTg5MDcsImV4cCI6MjA5MjY5NDkwN30.lGt8SvDdkn7w63Uetmkyg9SpfiX__7gBeQrZLYngxxM';
+// B2専用テーブル名（Supabaseでb2_drawingsとb2_text_postsテーブルを作ってね）
+const TABLE_DRAW = 'b2_drawings';
+const TABLE_TEXT = 'b2_text_posts';
+
+/* ================================================ */
+
+// 入場エフェクト
+setTimeout(() => {
+  document.getElementById('enter-overlay').style.display = 'none';
+}, 3200);
+
+// ナビ
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('page-' + btn.dataset.page).classList.add('active');
+  });
+});
+
+// 掲示板タブ
+document.querySelectorAll('.board-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.board-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.board-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('board-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// 記録レンダリング
+function renderRecords() {
+  document.getElementById('record-list').innerHTML = RECORDS.map(r => {
+    const nameClass = r.name === 'あなた' ? 'record-name' :
+                      r.name === ''       ? 'record-name gone' :
+                      r.status === 'error'? 'record-name corrupt' : 'record-name';
+    const nameDisp = r.name === '' ? '（名前の記録なし）' : r.name;
+    return `
+      <div class="record-item">
+        <div class="record-no">${r.no}</div>
+        <div class="${nameClass}">${nameDisp}</div>
+        <div class="record-date">${r.date}</div>
+        <div class="record-status ${r.status}">${r.label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// キャンバス
+const canvas = document.getElementById('draw-canvas');
+const ctx = canvas.getContext('2d');
+ctx.fillStyle = '#050810'; ctx.fillRect(0,0,canvas.width,canvas.height);
+let drawing=false, eraser=false, lx=0, ly=0;
+function pos(e) {
+  const r=canvas.getBoundingClientRect();
+  const sx=canvas.width/r.width, sy=canvas.height/r.height;
+  const s=e.touches?e.touches[0]:e;
+  return [(s.clientX-r.left)*sx,(s.clientY-r.top)*sy];
+}
+canvas.addEventListener('mousedown', e=>{drawing=true;[lx,ly]=pos(e);});
+canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);},{passive:false});
+canvas.addEventListener('mousemove', e=>stroke(e));
+canvas.addEventListener('touchmove', e=>{e.preventDefault();stroke(e);},{passive:false});
+canvas.addEventListener('mouseup',   ()=>drawing=false);
+canvas.addEventListener('mouseleave',()=>drawing=false);
+canvas.addEventListener('touchend',  ()=>drawing=false);
+function stroke(e) {
+  if(!drawing) return;
+  const [x,y]=pos(e);
+  ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(x,y);
+  ctx.strokeStyle=eraser?'#050810':document.getElementById('pen-color').value;
+  ctx.lineWidth=document.getElementById('pen-size').value;
+  ctx.lineCap=ctx.lineJoin='round'; ctx.stroke();
+  [lx,ly]=[x,y];
+}
+document.getElementById('eraser-btn').addEventListener('click',function(){
+  eraser=!eraser; this.classList.toggle('on',eraser); this.textContent=eraser?'Pen':'Eraser';
+});
+document.getElementById('clear-btn').addEventListener('click',()=>{
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,canvas.width,canvas.height);
+});
+
+// Supabase
+let sb=null;
+if(SUPABASE_URL&&SUPABASE_ANON_KEY){
+  const s=document.createElement('script');
+  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  s.onload=()=>{ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY); loadDrawings(); loadPosts(); };
+  document.head.appendChild(s);
+}
+document.getElementById('draw-send').addEventListener('click',async()=>{
+  const st=document.getElementById('draw-status');
+  if(!sb){st.textContent='Supabaseを設定してください';return;}
+  const name=document.getElementById('draw-name').value.trim()||'匿名';
+  const msg=document.getElementById('draw-msg').value.trim();
+  st.textContent='記録中…';
+  const{error}=await sb.from(TABLE_DRAW).insert({name,message:msg,image_data:canvas.toDataURL()});
+  if(error){st.textContent='error: '+error.message;return;}
+  st.textContent='— 記録されました —';
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  document.getElementById('draw-name').value=''; document.getElementById('draw-msg').value='';
+  loadDrawings();
+});
+async function loadDrawings(){
+  if(!sb) return;
+  const{data}=await sb.from(TABLE_DRAW).select('*').order('created_at',{ascending:false}).limit(30);
+  document.getElementById('recv-grid').innerHTML=data?.length?data.map(d=>`
+    <div class="recv-item"><img src="${d.image_data}" alt="sketch" loading="lazy">
+    <div class="recv-info"><div class="recv-name">${d.name}</div>${d.message?`<div class="recv-msg">${d.message}</div>`:''}</div></div>
+  `).join(''):'<p class="hint-txt">まだ記録はありません</p>';
+}
+document.getElementById('text-send').addEventListener('click',async()=>{
+  const st=document.getElementById('text-status');
+  const name=document.getElementById('text-name').value.trim()||'匿名';
+  const msg=document.getElementById('text-msg').value.trim();
+  if(!msg){st.textContent='何かを書いてください';return;}
+  if(!sb){st.textContent='Supabaseを設定してください';return;}
+  st.textContent='記録中…';
+  const{error}=await sb.from(TABLE_TEXT).insert({name,message:msg});
+  if(error){st.textContent='error: '+error.message;return;}
+  st.textContent='— あなたの記録は残りました —';
+  document.getElementById('text-name').value=''; document.getElementById('text-msg').value='';
+  loadPosts();
+});
+async function loadPosts(){
+  if(!sb) return;
+  const{data}=await sb.from(TABLE_TEXT).select('*').order('created_at',{ascending:false}).limit(50);
+  document.getElementById('text-posts').innerHTML=data?.length?data.map(p=>{
+    const d=new Date(p.created_at);
+    const ds=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+    return `<div class="post-item"><div class="post-hd"><span class="post-name">${p.name}</span><span class="post-date">${ds}</span></div><div class="post-body">${p.message.replace(/</g,'&lt;')}</div></div>`;
+  }).join(''):'<p class="hint-txt" style="padding:1rem">まだ記録はありません</p>';
+}
+
+renderRecords();
+</script>
+</body>
+</html>
