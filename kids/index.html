@@ -260,8 +260,8 @@ body {
   transition: transform 0.15s;
 }
 .fish:hover { transform: scale(1.3) !important; }
-.fish.left  { animation-direction: normal; }
-.fish.right { animation-name: swimRight; }
+.fish.left  { animation-direction: reverse; }
+.fish.right { animation-direction: normal; transform: scaleX(-1); }
 
 .fish.f1 { font-size:42px; top:25%; animation-duration:9s;  animation-delay:0s;   }
 .fish.f2 { font-size:28px; top:55%; animation-duration:12s; animation-delay:2s;   }
@@ -275,10 +275,7 @@ body {
   0%   { left: -80px; }
   100% { left: calc(100% + 80px); }
 }
-@keyframes swimRight {
-  0%   { left: calc(100% + 80px); transform: scaleX(-1); }
-  100% { left: -80px; transform: scaleX(-1); }
-}
+
 
 /* えさ */
 .food {
