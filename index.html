@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ふりはら // CREATIVE ARCHIVE</title>
+<meta name="description" content="ふりはらの活動場所まとめ。イラストメイン、たまに小説。pixiv・X・マシュマロなどはこちらから。">
+
+<!-- ファビコン -->
+<link rel="icon" type="image/png" href="favicon-256.png">
+<link rel="icon" href="favicon.ico">
+
+<!-- OGP (SNS共有時の見た目) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="ふりはら // CREATIVE ARCHIVE">
+<meta property="og:description" content="イラストメイン、たまに小説。活動場所まとめ。">
+<meta property="og:image" content="og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ふりはら // CREATIVE ARCHIVE">
+<meta name="twitter:description" content="イラストメイン、たまに小説。活動場所まとめ。">
+<meta name="twitter:image" content="og-image.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DotGothic16&family=VT323&display=swap');
 
@@ -438,6 +453,47 @@ section{
   background: var(--vw-cyan);
   padding: 5px 10px;
   border-radius: 3px;
+}
+
+/* ===== BGM toggle ===== */
+.bgm-toggle{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 500;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(95,251,241,0.5);
+  background: rgba(24,10,46,0.75);
+  backdrop-filter: blur(6px);
+  color: var(--vw-cream);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.bgm-toggle:hover{ border-color: var(--vw-pink); transform: translateY(-2px); }
+.bgm-toggle .bgm-dot{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+}
+.bgm-toggle.playing .bgm-dot{
+  background: var(--vw-pink);
+  box-shadow: 0 0 8px var(--vw-pink);
+  animation: bgm-pulse 1s ease-in-out infinite;
+}
+@keyframes bgm-pulse{
+  0%,100%{ opacity:1; transform: scale(1); }
+  50%{ opacity:0.5; transform: scale(0.7); }
+}
+@media (max-width: 560px){
+  .bgm-toggle{ right: 14px; bottom: 14px; padding: 9px 13px; font-size: 11px; }
 }
 
 /* ===== request ticket ===== */
@@ -881,6 +937,11 @@ footer{
   </div>
 </section>
 
+<button class="bgm-toggle" id="bgmToggle" aria-pressed="false">
+  <span class="bgm-dot"></span>
+  <span id="bgmLabel">BGM OFF</span>
+</button>
+
 <footer>
   ✦ ふりはら CREATIVE ARCHIVE — 2026 <button class="secret-trigger" id="secretTrigger" aria-label="secret">✦</button>
 </footer>
@@ -951,6 +1012,124 @@ footer{
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') secretOverlay.classList.remove('open');
   });
+
+  /* ===== BGM: generative vaporwave-ish ambient pad (Web Audio, no files) ===== */
+  (function(){
+    const btn = document.getElementById('bgmToggle');
+    const label = document.getElementById('bgmLabel');
+    let ctx = null;
+    let masterGain = null;
+    let isPlaying = false;
+    let chordTimer = null;
+    let activeNodes = [];
+
+    // slow chord progression, vaporwave-ish (Fmaj7 - Dm7 - Gm7 - C7 style, low register)
+    const chords = [
+      [174.61, 220.00, 261.63, 329.63],   // F3 A3 C4 E4  (Fmaj7)
+      [146.83, 174.61, 220.00, 261.63],   // D3 F3 A3 C4  (Dm7)
+      [196.00, 233.08, 293.66, 349.23],   // G3 Bb3 D4 F4 (Gm7)
+      [130.81, 164.81, 196.00, 233.08],   // C3 E3 G3 Bb3 (C7)
+    ];
+    let chordIndex = 0;
+
+    function ensureContext(){
+      if (!ctx){
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = ctx.createGain();
+        masterGain.gain.value = 0;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 900;
+
+        // simple feedback delay for a hazy, spacious feel
+        const delay = ctx.createDelay(2.0);
+        delay.delayTime.value = 0.55;
+        const feedback = ctx.createGain();
+        feedback.gain.value = 0.32;
+        const delayFilter = ctx.createBiquadFilter();
+        delayFilter.type = 'lowpass';
+        delayFilter.frequency.value = 1800;
+
+        delay.connect(feedback);
+        feedback.connect(delayFilter);
+        delayFilter.connect(delay);
+
+        masterGain.connect(filter);
+        filter.connect(ctx.destination);
+        filter.connect(delay);
+        delay.connect(ctx.destination);
+
+        // slow filter sweep LFO for movement
+        const lfo = ctx.createOscillator();
+        lfo.frequency.value = 0.05;
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.value = 300;
+        lfo.connect(lfoGain);
+        lfoGain.connect(filter.frequency);
+        lfo.start();
+
+        ctx._filter = filter;
+      }
+    }
+
+    function playChord(freqs, duration){
+      const now = ctx.currentTime;
+      freqs.forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = i === 0 ? 'triangle' : 'sine';
+        osc.frequency.value = f;
+
+        const g = ctx.createGain();
+        g.gain.value = 0;
+        g.gain.linearRampToValueAtTime(0.05, now + 1.2);
+        g.gain.linearRampToValueAtTime(0.05, now + duration - 1.5);
+        g.gain.linearRampToValueAtTime(0, now + duration);
+
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(now);
+        osc.stop(now + duration + 0.1);
+        activeNodes.push(osc);
+      });
+    }
+
+    function scheduleLoop(){
+      const chordDuration = 6.5;
+      playChord(chords[chordIndex % chords.length], chordDuration);
+      chordIndex++;
+      chordTimer = setTimeout(scheduleLoop, chordDuration * 1000);
+    }
+
+    function start(){
+      ensureContext();
+      if (ctx.state === 'suspended') ctx.resume();
+      masterGain.gain.cancelScheduledValues(ctx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.6);
+      chordIndex = 0;
+      scheduleLoop();
+      isPlaying = true;
+      btn.classList.add('playing');
+      btn.setAttribute('aria-pressed', 'true');
+      label.textContent = 'BGM ON';
+    }
+
+    function stop(){
+      if (chordTimer) clearTimeout(chordTimer);
+      if (masterGain){
+        masterGain.gain.cancelScheduledValues(ctx.currentTime);
+        masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+      }
+      isPlaying = false;
+      btn.classList.remove('playing');
+      btn.setAttribute('aria-pressed', 'false');
+      label.textContent = 'BGM OFF';
+    }
+
+    btn.addEventListener('click', () => {
+      if (isPlaying) stop(); else start();
+    });
+  })();
 </script>
 </body>
 </html>
