@@ -596,8 +596,8 @@ footer{
 
     <div class="tab-panel active" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
       <div class="window-body">
-        <p>はじめまして、<span class="highlight">ふりはら</span>です。ノスタルジックな色彩と、ちょっと不思議な世界観のイラストを描いています。</p>
-        <p>普段は各プラットフォームで作品を公開中。LINKSタブから覗いてもらえたら嬉しいです。</p>
+        <p>初めまして！<span class="highlight">ふりはら</span>です。元気な蝿です。</p>
+        <p>イラストメイン、小説たまにくらいでやっています。よろしくお願いします！</p>
       </div>
     </div>
 
@@ -700,8 +700,8 @@ footer{
       <div class="ticket">
         <div class="ticket-label">★ SPECIAL ITEM GET ★</div>
         <div class="ticket-title">リクエストけん</div>
-        <div class="ticket-desc">この券を見せてくれた人は、リクエストの列にちょっとだけ割り込めます(たぶん)。押し売りは受け付けません。</div>
-        <div class="ticket-code">CODE: HIMITSU-0713 / 有効期限: 私が忘れるまで</div>
+        <div class="ticket-desc">これを私に見せるとリクエストができます。</div>
+        <div class="ticket-code">NO. <span id="ticketSerial">------</span> ／ 記名式・譲渡不可(転売禁止)</div>
       </div>
 
       <div class="secret-badge">よくぞ見つけた 👀</div>
@@ -731,8 +731,15 @@ footer{
   const secretTrigger = document.getElementById('secretTrigger');
   const secretOverlay = document.getElementById('secretOverlay');
   const secretClose = document.getElementById('secretClose');
+  const ticketSerial = document.getElementById('ticketSerial');
+
+  function generateSerial(){
+    const num = Math.floor(Math.random() * 900000) + 100000;
+    return 'FH-' + num;
+  }
 
   secretTrigger.addEventListener('click', () => {
+    ticketSerial.textContent = generateSerial();
     secretOverlay.classList.add('open');
   });
   secretClose.addEventListener('click', () => {
