@@ -3,1095 +3,771 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>旧淵ノ海遊館 | Fuchino Aquarium</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500&family=Josefin+Sans:ital,wght@0,100;0,300;0,400;1,100;1,300&display=swap" rel="stylesheet">
+<title>ふりはら // CREATIVE ARCHIVE</title>
 <style>
-/* ===================== 変数 ===================== */
-:root {
-  --deep:    #0a1628;
-  --navy:    #0d2137;
-  --ocean:   #0e3d5c;
-  --teal:    #1a6b7a;
-  --aqua:    #2ab5c8;
-  --foam:    #7de8f0;
-  --glass:   rgba(255,255,255,0.07);
-  --glass-b: rgba(255,255,255,0.12);
-  --glass-s: rgba(255,255,255,0.18);
-  --text:    #e8f4f8;
-  --text-m:  rgba(232,244,248,0.6);
-  --text-f:  rgba(232,244,248,0.3);
-  --border:  rgba(122,232,240,0.15);
-  --border-s:rgba(122,232,240,0.3);
-  --glow:    rgba(42,181,200,0.2);
-  --warn:    rgba(255,200,100,0.7);
-  --serif:   'Shippori Mincho', serif;
-  --sans:    'Noto Sans JP', sans-serif;
-  --latin:   'Josefin Sans', sans-serif;
-  --r:       14px;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700;1,900&family=Poppins:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --vw-navy: #180a2e;
+  --vw-purple: #4b2e83;
+  --vw-pink: #ff6ec7;
+  --vw-cyan: #5ffbf1;
+  --vw-magenta: #ff2e88;
+  --vw-cream: #f5ecff;
+  --vw-peach: #ffb997;
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Poppins', sans-serif;
+  --font-mono: 'Space Mono', monospace;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+*{ margin:0; padding:0; box-sizing:border-box; }
 
-body {
-  font-family: var(--sans);
-  background: var(--deep);
-  color: var(--text);
-  min-height: 100vh;
+html{ scroll-behavior: smooth; }
+
+body{
+  background: var(--vw-navy);
+  color: var(--vw-cream);
+  font-family: var(--font-body);
   overflow-x: hidden;
-  padding-bottom: 4rem;
+  position: relative;
 }
 
-/* ===================== 背景 ===================== */
-.bg {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+/* ===== scanline overlay ===== */
+.scanlines{
+  pointer-events:none;
+  position: fixed;
+  inset:0;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.035) 0px,
+    rgba(255,255,255,0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+.vignette{
+  pointer-events:none;
+  position: fixed;
+  inset:0;
+  z-index: 998;
+  box-shadow: inset 0 0 18vw rgba(0,0,0,0.65);
 }
 
-/* 水中グラデーション */
-.bg-gradient {
-  position: absolute; inset: 0;
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+/* ===== hero ===== */
+.hero{
+  position: relative;
+  min-height: 100svh;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
   background:
-    radial-gradient(ellipse 80% 60% at 30% 0%, rgba(26,107,122,0.35) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(14,61,92,0.5) 0%, transparent 55%),
-    radial-gradient(ellipse 100% 50% at 50% 100%, rgba(10,22,40,0.8) 0%, transparent 60%),
-    linear-gradient(180deg, #0a1628 0%, #0d2137 40%, #0a1628 100%);
+    radial-gradient(ellipse 90% 60% at 50% 8%, rgba(255,110,199,0.55), transparent 60%),
+    linear-gradient(180deg, #2b1152 0%, #4b1f66 28%, #7a2d78 46%, #c94a7e 62%, #ff8b6b 78%, #ffd39a 100%);
 }
 
-/* 光の揺らぎ（コースティクス） */
-.caustics {
-  position: absolute; inset: 0; opacity: 0.06;
-  background-image:
-    radial-gradient(ellipse 30px 60px at 20% 30%, rgba(122,232,240,1) 0%, transparent 100%),
-    radial-gradient(ellipse 20px 40px at 45% 15%, rgba(122,232,240,1) 0%, transparent 100%),
-    radial-gradient(ellipse 40px 20px at 70% 40%, rgba(122,232,240,1) 0%, transparent 100%),
-    radial-gradient(ellipse 25px 50px at 85% 20%, rgba(122,232,240,1) 0%, transparent 100%),
-    radial-gradient(ellipse 35px 35px at 55% 60%, rgba(122,232,240,1) 0%, transparent 100%);
-  animation: causticShift 12s ease-in-out infinite alternate;
+.hero .sun{
+  position:absolute;
+  top: 16%;
+  left:50%;
+  transform: translateX(-50%);
+  width: min(48vw, 420px);
+  height: min(48vw, 420px);
+  border-radius:50%;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--vw-peach) 0px, var(--vw-peach) 6px,
+    transparent 6px, transparent 12px
+  ), radial-gradient(circle, #ffe3b0 0%, var(--vw-pink) 55%, var(--vw-magenta) 100%);
+  background-blend-mode: multiply, normal;
+  box-shadow: 0 0 90px rgba(255,110,199,0.7), 0 0 160px rgba(255,180,150,0.5);
+  animation: sunfloat 8s ease-in-out infinite;
 }
-@keyframes causticShift {
-  0%   { transform: scale(1) translate(0,0); opacity: 0.06; }
-  50%  { transform: scale(1.3) translate(2%,1%); opacity: 0.1; }
-  100% { transform: scale(0.9) translate(-1%,2%); opacity: 0.05; }
-}
-
-/* 泡 */
-.bubbles { position: absolute; inset: 0; }
-.bubble {
-  position: absolute; border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.4), rgba(122,232,240,0.1));
-  border: 1px solid rgba(122,232,240,0.25);
-  animation: bubbleRise linear infinite;
-}
-.bubble:nth-child(1)  { width:8px;  height:8px;  left:8%;   animation-duration:14s; animation-delay:0s;   }
-.bubble:nth-child(2)  { width:4px;  height:4px;  left:18%;  animation-duration:11s; animation-delay:2s;   }
-.bubble:nth-child(3)  { width:6px;  height:6px;  left:32%;  animation-duration:16s; animation-delay:5s;   }
-.bubble:nth-child(4)  { width:10px; height:10px; left:52%;  animation-duration:13s; animation-delay:1s;   }
-.bubble:nth-child(5)  { width:5px;  height:5px;  left:67%;  animation-duration:18s; animation-delay:7s;   }
-.bubble:nth-child(6)  { width:7px;  height:7px;  left:78%;  animation-duration:12s; animation-delay:3s;   }
-.bubble:nth-child(7)  { width:3px;  height:3px;  left:88%;  animation-duration:15s; animation-delay:9s;   }
-.bubble:nth-child(8)  { width:9px;  height:9px;  left:25%;  animation-duration:17s; animation-delay:4s;   }
-.bubble:nth-child(9)  { width:4px;  height:4px;  left:44%;  animation-duration:10s; animation-delay:6s;   }
-.bubble:nth-child(10) { width:6px;  height:6px;  left:93%;  animation-duration:14s; animation-delay:8s;   }
-@keyframes bubbleRise {
-  0%   { bottom: -20px; opacity: 0; transform: translateX(0); }
-  10%  { opacity: 0.7; }
-  90%  { opacity: 0.4; }
-  100% { bottom: 105vh; opacity: 0; transform: translateX(15px); }
+@keyframes sunfloat{
+  0%,100%{ transform: translateX(-50%) translateY(0); }
+  50%{ transform: translateX(-50%) translateY(-14px); }
 }
 
-/* 水面のきらめき */
-.surface {
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(122,232,240,0.6), rgba(255,255,255,0.4), rgba(122,232,240,0.6), transparent);
-  animation: surfaceShimmer 6s ease-in-out infinite;
-}
-@keyframes surfaceShimmer {
-  0%,100% { opacity: 0.4; transform: scaleX(0.95); }
-  50% { opacity: 1; transform: scaleX(1); }
+.hero .grid-floor{
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height: 44%;
+  background:
+    linear-gradient(180deg, rgba(24,10,46,0) 0%, rgba(24,10,46,0.2) 100%),
+    repeating-linear-gradient(90deg, rgba(95,251,241,0.55) 0 2px, transparent 2px 60px),
+    repeating-linear-gradient(0deg, rgba(95,251,241,0.55) 0 2px, transparent 2px 34px);
+  background-color: rgba(24,10,46,0.35);
+  transform: perspective(320px) rotateX(58deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(180deg, black 40%, transparent 100%);
 }
 
-/* ===================== 閉館通知バー ===================== */
-.closure-bar {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(10,18,32,0.92);
-  backdrop-filter: blur(16px) saturate(1.5);
-  border-bottom: 1px solid rgba(255,200,100,0.2);
-  padding: 0.5rem 1.5rem;
-  display: flex; align-items: center; gap: 1rem;
+.hero-content{
+  position:relative;
+  z-index:5;
+  padding: 0 24px;
+}
+
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: clamp(11px,1.6vw,14px);
+  letter-spacing: 0.5em;
+  color: var(--vw-navy);
+  opacity:0.75;
+  margin-bottom: 18px;
+}
+
+.hero h1{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: clamp(52px, 12vw, 128px);
+  line-height: 0.95;
+  color: var(--vw-cream);
+  text-shadow:
+    3px 0 0 rgba(95,251,241,0.85),
+    -3px 0 0 rgba(255,46,136,0.85),
+    0 12px 40px rgba(24,10,46,0.5);
+  letter-spacing: 0.02em;
+}
+
+.hero .tagline{
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: clamp(13px,2vw,16px);
+  color: var(--vw-navy);
+  letter-spacing: 0.08em;
+}
+
+.marquee{
+  position:relative;
+  z-index:5;
+  width:100%;
+  overflow:hidden;
+  background: var(--vw-navy);
+  border-top: 1px solid var(--vw-cyan);
+  border-bottom: 1px solid var(--vw-cyan);
+  padding: 10px 0;
+}
+.marquee-track{
+  display:flex;
+  width: max-content;
+  gap: 40px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: var(--vw-cyan);
+  animation: scroll-left 22s linear infinite;
+}
+.marquee-track span{ white-space:nowrap; }
+@keyframes scroll-left{
+  from{ transform: translateX(0); }
+  to{ transform: translateX(-50%); }
+}
+
+/* ===== section shell ===== */
+section{
+  position: relative;
+  padding: 100px 24px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.section-label{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: var(--vw-cyan);
+  margin-bottom: 14px;
+}
+
+.section-title{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 44px);
+  color: var(--vw-cream);
+  margin-bottom: 34px;
+}
+
+/* ===== tabbed window shell ===== */
+.tab-shell{
+  background: rgba(75,46,131,0.35);
+  border: 1px solid rgba(95,251,241,0.4);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
   overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
-.closure-bar::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,200,100,0.03), transparent);
-  animation: scanBar 4s linear infinite;
+.window-bar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding: 10px 14px;
+  background: linear-gradient(90deg, var(--vw-purple), var(--vw-magenta));
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--vw-cream);
 }
-@keyframes scanBar { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
-.closure-icon { font-size: 14px; opacity: 0.7; flex-shrink: 0; }
-.closure-text {
-  font-family: var(--latin); font-size: 11px; letter-spacing: 2px;
-  color: var(--warn); flex: 1;
+.window-bar .dot{
+  width:9px; height:9px; border-radius:50%;
+  background: var(--vw-cream);
+  opacity:0.85;
 }
-.closure-date {
-  font-family: var(--latin); font-size: 11px; letter-spacing: 1px;
-  color: rgba(255,200,100,0.4); flex-shrink: 0; white-space: nowrap;
+.window-bar .dot:nth-child(1){ background: var(--vw-pink); }
+.window-bar .dot:nth-child(2){ background: var(--vw-peach); }
+.window-bar .dot:nth-child(3){ background: var(--vw-cyan); }
+.window-title{ margin-left: 8px; opacity:0.9; }
+
+.tab-list{
+  display:flex;
+  gap: 2px;
+  padding: 10px 10px 0;
+  background: rgba(24,10,46,0.4);
+  border-bottom: 1px solid rgba(95,251,241,0.3);
+}
+.tab-btn{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 12px 20px;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--vw-cream);
+  opacity: 0.55;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+.tab-btn:hover{ opacity: 0.85; }
+.tab-btn.active{
+  opacity: 1;
+  background: rgba(75,46,131,0.6);
+  color: var(--vw-cyan);
+  box-shadow: inset 0 2px 0 var(--vw-pink);
+}
+.tab-btn:focus-visible{ outline: 2px solid var(--vw-cyan); outline-offset: 2px; }
+
+.tab-panel{ display:none; }
+.tab-panel.active{ display:block; animation: panel-in 0.35s ease; }
+@keyframes panel-in{
+  from{ opacity:0; transform: translateY(6px); }
+  to{ opacity:1; transform: translateY(0); }
 }
 
-/* ===================== ヘッダー ===================== */
-.site-header {
-  position: relative; z-index: 50;
-  background: rgba(10,18,32,0.75);
-  backdrop-filter: blur(20px) saturate(1.8);
-  border-bottom: 1px solid var(--border);
+.window-body{
+  padding: 28px 26px 32px;
+  font-size: 15.5px;
+  line-height: 1.9;
+  color: var(--vw-cream);
 }
-.header-inner {
-  max-width: 900px; margin: 0 auto;
-  padding: 1rem 1.5rem;
-  display: flex; align-items: center; gap: 1.5rem;
+.window-body p + p{ margin-top: 14px; }
+.window-body .highlight{ color: var(--vw-pink); font-family: var(--font-mono); }
+
+/* ===== collaborations list ===== */
+.collab-list{
+  display:flex;
+  flex-direction: column;
 }
-.logo-wrap { flex-shrink: 0; }
-.logo-jp {
-  font-family: var(--serif); font-size: 22px; letter-spacing: 6px; font-weight: 600;
-  color: var(--text); display: block; line-height: 1;
-  text-shadow: 0 0 30px rgba(42,181,200,0.4);
+.collab-item{
+  display:grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px dashed rgba(95,251,241,0.3);
 }
-.logo-en {
-  font-family: var(--latin); font-size: 10px; letter-spacing: 4px; font-weight: 100;
-  color: var(--text-f); display: block; margin-top: 3px; font-style: italic;
+.collab-item:last-child{ border-bottom: none; }
+.collab-main .name{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--vw-cream);
 }
-.logo-badge {
-  display: inline-block; margin-left: 8px;
-  font-family: var(--latin); font-size: 8px; letter-spacing: 2px;
-  background: rgba(255,200,100,0.12); border: 1px solid rgba(255,200,100,0.25);
-  color: var(--warn); border-radius: 3px; padding: 1px 6px; vertical-align: middle;
+.collab-main .role{
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--vw-cream);
+  opacity: 0.65;
+  line-height: 1.6;
+}
+.collab-link{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--vw-pink);
+  text-decoration: none;
+  white-space: nowrap;
+  align-self:center;
+}
+.collab-link:hover{ color: var(--vw-cyan); }
+@media (max-width: 560px){
+  .collab-item{ grid-template-columns: 1fr; gap: 4px; }
+  .collab-link{ justify-self:start; }
 }
 
-.main-nav { display: flex; gap: 1px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
-.nav-btn {
-  font-family: var(--serif); font-size: 13px; letter-spacing: 2px; font-weight: 500;
-  background: none; border: none; color: var(--text-m); cursor: pointer;
-  padding: 7px 14px; border-radius: 8px; transition: all 0.2s; white-space: nowrap;
+/* ===== hidden trigger ===== */
+.secret-trigger{
+  background:none;
+  border:none;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+  padding: 0 2px;
+  opacity: 1;
+}
+.secret-trigger:hover{ cursor: pointer; }
+
+/* ===== secret room overlay ===== */
+.secret-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding: 24px;
+  background: rgba(10,4,22,0.88);
+  backdrop-filter: blur(4px);
+}
+.secret-overlay.open{ display:flex; }
+
+.secret-box{
+  width: min(480px, 100%);
+  border: 1px solid var(--vw-cyan);
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #2a1147, #180a2e 60%);
+  box-shadow: 0 0 60px rgba(95,251,241,0.35), 0 20px 60px rgba(0,0,0,0.5);
+  animation: panel-in 0.3s ease;
+}
+.secret-box .window-bar{
+  background: linear-gradient(90deg, var(--vw-magenta), var(--vw-cyan));
+  color: var(--vw-navy);
+  justify-content: space-between;
+}
+.secret-close{
+  background:none;
+  border:none;
+  color: var(--vw-navy);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor:pointer;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+}
+.secret-close:hover{ opacity:0.6; }
+
+.secret-body{
+  padding: 30px 26px 34px;
+  text-align:center;
+}
+.secret-blink{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--vw-pink);
+  animation: blink 1.1s steps(1) infinite;
+  margin-bottom: 14px;
+}
+@keyframes blink{ 50%{ opacity: 0.15; } }
+
+.secret-title{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 30px;
+  background: linear-gradient(90deg, var(--vw-pink), var(--vw-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 18px;
+}
+.secret-body p{
+  font-size: 14px;
+  line-height: 1.9;
+  opacity: 0.85;
+  margin-bottom: 10px;
+}
+.hit-counter{
+  margin: 20px auto 4px;
+  display:inline-flex;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-weight:700;
+  font-size: 16px;
+}
+.hit-counter span{
+  background: #000;
+  color: var(--vw-cyan);
+  border: 1px solid rgba(95,251,241,0.5);
+  padding: 4px 6px;
+  border-radius: 3px;
+  min-width: 14px;
+  text-align:center;
+}
+.hit-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  opacity:0.5;
+  margin-top: 6px;
+}
+.secret-badge{
+  margin-top: 22px;
+  display:inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--vw-navy);
+  background: var(--vw-cyan);
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+/* ===== request ticket ===== */
+.ticket{
+  margin: 22px auto 4px;
+  max-width: 320px;
+  border: 2px dashed var(--vw-pink);
+  border-radius: 8px;
+  padding: 16px 14px;
+  background: rgba(255,110,199,0.08);
   position: relative;
 }
-.nav-btn:hover { color: var(--foam); background: var(--glass); }
-.nav-btn.active {
-  color: var(--foam);
-  background: linear-gradient(135deg, rgba(42,181,200,0.12), rgba(122,232,240,0.06));
-  border: 1px solid var(--border);
+.ticket::before, .ticket::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  width: 16px; height:16px;
+  background: #180a2e;
+  border-radius:50%;
+  transform: translateY(-50%);
+}
+.ticket::before{ left: -9px; }
+.ticket::after{ right: -9px; }
+.ticket-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--vw-cyan);
+  margin-bottom: 6px;
+}
+.ticket-title{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--vw-cream);
+  margin-bottom: 6px;
+}
+.ticket-desc{
+  font-size: 12.5px;
+  opacity: 0.75;
+  line-height: 1.7;
+}
+.ticket-code{
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--vw-pink);
 }
 
-/* ===================== レイアウト ===================== */
-.main-wrap {
-  position: relative; z-index: 10;
-  max-width: 900px; margin: 0 auto;
-  padding: 2.5rem 1.5rem 8rem;
-}
-.page { display: none; }
-.page.active { display: block; animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1); }
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
-
-/* ページヘッダー */
-.page-header { margin-bottom: 2.5rem; }
-.page-eyebrow {
-  font-family: var(--latin); font-size: 10px; letter-spacing: 4px; font-weight: 300;
-  color: var(--aqua); opacity: 0.7; margin-bottom: 0.4rem; font-style: italic;
-}
-.page-title {
-  font-family: var(--serif); font-size: 38px; letter-spacing: 8px; font-weight: 600;
-  color: var(--text); line-height: 1;
-}
-.page-rule {
-  margin-top: 1rem; height: 1px;
-  background: linear-gradient(90deg, var(--aqua), rgba(42,181,200,0.1));
-  opacity: 0.3;
-}
-.page-sub {
-  font-size: 12px; color: var(--text-f); letter-spacing: 1.5px; margin-top: 0.6rem;
-  font-family: var(--latin); font-weight: 300;
+/* ===== links grid ===== */
+.link-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
 }
 
-/* グラスパネル */
-.glass-panel {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  position: relative; overflow: hidden;
+.link-card{
+  display:flex;
+  flex-direction:column;
+  text-decoration:none;
+  color: inherit;
+  border-radius: 10px;
+  overflow:hidden;
+  border: 1px solid rgba(95,251,241,0.3);
+  background: linear-gradient(160deg, rgba(75,46,131,0.55), rgba(24,10,46,0.75));
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
-.glass-panel::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+.link-card:hover, .link-card:focus-visible{
+  transform: translateY(-6px);
+  border-color: var(--vw-pink);
+  box-shadow: 0 16px 40px rgba(255,46,136,0.25), 0 0 0 1px rgba(255,110,199,0.3);
+}
+.link-card:focus-visible{ outline: 2px solid var(--vw-cyan); outline-offset: 3px; }
+
+.link-card .bar{
+  display:flex; align-items:center; gap:6px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.25);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--vw-cyan);
+}
+.link-card .bar .dot{ width:7px; height:7px; border-radius:50%; background: var(--vw-pink); }
+
+.link-card .content{
+  padding: 22px 20px 24px;
+}
+.link-card .platform{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--vw-cream);
+}
+.link-card .desc{
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--vw-cream);
+  opacity: 0.7;
+  line-height: 1.6;
+}
+.link-card .arrow{
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--vw-pink);
+  letter-spacing: 0.1em;
 }
 
-/* ===================== トップページ ===================== */
-.top-hero {
-  text-align: center; padding: 3rem 2rem 2rem; margin-bottom: 2rem;
-  position: relative;
-}
-.hero-emblem {
-  font-size: 56px; margin-bottom: 1.5rem;
-  filter: drop-shadow(0 0 20px rgba(42,181,200,0.5));
-  animation: emblemFloat 6s ease-in-out infinite;
-  display: block;
-}
-@keyframes emblemFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-.hero-title-en {
-  font-family: var(--latin); font-size: 11px; letter-spacing: 6px; font-weight: 100;
-  color: var(--aqua); opacity: 0.6; margin-bottom: 0.8rem; font-style: italic;
-}
-.hero-title-jp {
-  font-family: var(--serif); font-size: 48px; letter-spacing: 10px; font-weight: 700;
-  color: var(--text);
-  text-shadow: 0 0 40px rgba(42,181,200,0.3), 0 0 80px rgba(42,181,200,0.1);
-  line-height: 1.2; margin-bottom: 1rem;
-}
-.hero-tagline {
-  font-family: var(--serif); font-size: 13px; letter-spacing: 4px; font-weight: 400;
-  color: var(--text-m); line-height: 2;
+/* ===== footer ===== */
+footer{
+  text-align:center;
+  padding: 50px 24px 70px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--vw-cyan);
+  opacity: 0.6;
 }
 
-/* 閉館ボックス */
-.closure-box {
-  max-width: 480px; margin: 2rem auto;
-  padding: 1.5rem 2rem;
-  background: rgba(255,200,100,0.04);
-  border: 1px solid rgba(255,200,100,0.2);
-  border-radius: var(--r);
-  text-align: center;
-}
-.closure-box-label {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 4px;
-  color: rgba(255,200,100,0.5); margin-bottom: 0.5rem;
-}
-.closure-box-date {
-  font-family: var(--serif); font-size: 28px; letter-spacing: 4px;
-  color: var(--warn); text-shadow: 0 0 20px rgba(255,200,100,0.3);
-}
-.closure-box-note {
-  font-size: 11px; color: var(--text-f); margin-top: 0.5rem; letter-spacing: 1px; line-height: 1.8;
-}
-
-/* お知らせ */
-.notice-list { display: flex; flex-direction: column; gap: 1px; }
-.notice-item {
-  display: flex; align-items: baseline; gap: 1.5rem;
-  padding: 0.9rem 1.3rem;
-  border-bottom: 1px solid rgba(122,232,240,0.06);
-  transition: background 0.2s;
-}
-.notice-item:last-child { border-bottom: none; }
-.notice-item:hover { background: rgba(42,181,200,0.04); }
-.notice-date {
-  font-family: var(--latin); font-size: 10px; letter-spacing: 2px; font-weight: 300;
-  color: var(--aqua); opacity: 0.6; flex-shrink: 0; font-style: italic;
-}
-.notice-cat {
-  font-family: var(--latin); font-size: 8px; letter-spacing: 2px;
-  padding: 2px 8px; border-radius: 3px; flex-shrink: 0;
-  border: 1px solid;
-}
-.notice-cat.info  { color: var(--aqua);  border-color: rgba(42,181,200,0.3); background: rgba(42,181,200,0.06); }
-.notice-cat.warn  { color: var(--warn);  border-color: rgba(255,200,100,0.3); background: rgba(255,200,100,0.06); }
-.notice-cat.close { color: var(--text-f); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
-.notice-text { font-family: var(--serif); font-size: 13px; letter-spacing: 1px; color: var(--text-m); flex: 1; }
-
-/* ===================== 展示室 ===================== */
-.exhibit-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.exhibit-tab {
-  font-family: var(--serif); font-size: 12px; letter-spacing: 2px;
-  padding: 6px 16px; border-radius: 999px;
-  background: var(--glass); border: 1px solid var(--border);
-  color: var(--text-m); cursor: pointer; transition: all 0.2s;
-}
-.exhibit-tab:hover { color: var(--foam); border-color: var(--border-s); }
-.exhibit-tab.active {
-  background: linear-gradient(135deg, rgba(42,181,200,0.15), rgba(122,232,240,0.08));
-  border-color: rgba(42,181,200,0.4); color: var(--foam);
-  box-shadow: 0 0 16px rgba(42,181,200,0.12);
-}
-
-.specimen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
-.specimen-card {
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1.2rem 1.3rem;
-  transition: all 0.25s; cursor: pointer; position: relative; overflow: hidden;
-}
-.specimen-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(42,181,200,0.08) 0%, transparent 70%);
-  opacity: 0; transition: opacity 0.3s;
-}
-.specimen-card:hover { border-color: var(--border-s); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px var(--glow); }
-.specimen-card:hover::after { opacity: 1; }
-.specimen-no {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; font-weight: 300;
-  color: var(--aqua); opacity: 0.5; margin-bottom: 0.6rem;
-}
-.specimen-icon { font-size: 28px; margin-bottom: 0.5rem; display: block; }
-.specimen-name { font-family: var(--serif); font-size: 17px; letter-spacing: 2px; color: var(--foam); margin-bottom: 2px; }
-.specimen-read { font-size: 9px; color: var(--text-f); letter-spacing: 1.5px; margin-bottom: 0.5rem; font-family: var(--latin); font-weight: 300; }
-.specimen-desc { font-size: 11px; color: var(--text-m); line-height: 1.7; margin-bottom: 0.8rem; }
-.specimen-status {
-  display: flex; align-items: center; gap: 5px;
-  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--text-f);
-}
-.status-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-.status-dot.on { background: #86efac; box-shadow: 0 0 6px #86efac; animation: statusPulse 2s infinite; }
-.status-dot.off { background: rgba(255,255,255,0.2); }
-@keyframes statusPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.specimen-link {
-  display: inline-block; margin-top: 0.6rem;
-  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; font-weight: 300;
-  color: var(--aqua); text-decoration: none; border-bottom: 1px solid rgba(42,181,200,0.3);
-  transition: 0.2s; padding-bottom: 1px;
-}
-.specimen-link:hover { color: var(--foam); border-color: var(--foam); }
-
-/* ===================== スタッフ詳細 ===================== */
-.staff-layout {
-  display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; align-items: start;
-}
-.staff-id-card {
-  padding: 1.8rem 1.5rem; text-align: center;
-}
-.staff-photo {
-  width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 1rem;
-  background: linear-gradient(135deg, rgba(42,181,200,0.15), rgba(10,61,92,0.5));
-  border: 2px solid var(--border-s);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 48px;
-  box-shadow: 0 0 30px rgba(42,181,200,0.15);
-}
-.staff-role {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; font-weight: 300;
-  color: var(--aqua); opacity: 0.6; margin-bottom: 0.3rem; font-style: italic;
-}
-.staff-name-jp {
-  font-family: var(--serif); font-size: 22px; letter-spacing: 4px; color: var(--text);
-  margin-bottom: 0.8rem;
-}
-.staff-id-no {
-  font-family: var(--latin); font-size: 10px; letter-spacing: 2px;
-  color: var(--text-f); border-top: 1px solid var(--border); padding-top: 0.7rem; margin-top: 0.5rem;
-}
-.staff-status {
-  display: flex; align-items: center; justify-content: center; gap: 5px;
-  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--text-m);
-  margin-top: 0.6rem;
-}
-
-.staff-info { display: flex; flex-direction: column; gap: 1.4rem; }
-.info-row { display: flex; flex-direction: column; gap: 4px; }
-.info-label {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 4px; font-weight: 300;
-  color: rgba(42,181,200,0.5); font-style: italic;
-}
-.info-val { font-family: var(--serif); font-size: 13px; letter-spacing: 1px; color: var(--text-m); line-height: 1.8; }
-.info-val.lg { font-family: var(--serif); font-size: 26px; letter-spacing: 3px; color: var(--foam); line-height: 1; }
-.info-val a { color: var(--aqua); text-decoration: none; border-bottom: 1px solid rgba(42,181,200,0.25); transition: 0.2s; }
-.info-val a:hover { color: var(--foam); }
-.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.sns-row { display: flex; gap: 7px; flex-wrap: wrap; }
-.sns-a {
-  width: 36px; height: 36px; border-radius: 9px;
-  background: var(--glass); border: 1px solid var(--border);
-  color: var(--text-m); font-family: var(--latin); font-size: 13px;
-  display: flex; align-items: center; justify-content: center;
-  text-decoration: none; transition: all 0.2s;
-}
-.sns-a:hover { border-color: var(--border-s); color: var(--foam); background: var(--glass-b); box-shadow: 0 0 16px var(--glow); transform: translateY(-2px); }
-.tag-list { display: flex; flex-wrap: wrap; gap: 5px; }
-.tag {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; padding: 3px 10px; border-radius: 3px;
-  background: var(--glass); border: 1px solid var(--border); color: var(--text-f);
-}
-
-/* ===================== 来館者記録 ===================== */
-.visitor-list { display: flex; flex-direction: column; gap: 8px; }
-.visitor-item {
-  display: flex; align-items: center; gap: 1.2rem;
-  padding: 1rem 1.3rem; transition: all 0.2s;
-  position: relative; overflow: hidden;
-}
-.visitor-item::before {
-  content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 2px;
-  background: linear-gradient(var(--aqua), var(--foam)); opacity: 0; transition: opacity 0.2s;
-}
-.visitor-item:hover { background: rgba(42,181,200,0.04); }
-.visitor-item:hover::before { opacity: 0.6; }
-.visitor-no {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--text-f); flex-shrink: 0; width: 32px;
-}
-.visitor-icon { font-size: 20px; flex-shrink: 0; }
-.visitor-info { flex: 1; min-width: 0; }
-.visitor-name {
-  font-family: var(--serif); font-size: 17px; letter-spacing: 2px;
-  color: var(--foam); text-decoration: none; transition: 0.2s;
-}
-.visitor-name:hover { text-shadow: 0 0 12px rgba(125,232,240,0.5); }
-.visitor-desc { font-size: 11px; color: var(--text-m); margin-top: 2px; line-height: 1.5; }
-.visitor-badge {
-  font-family: var(--latin); font-size: 8px; letter-spacing: 2px;
-  padding: 3px 10px; border-radius: 3px; flex-shrink: 0;
-  background: var(--glass); border: 1px solid var(--border); color: var(--text-f);
-}
-
-/* ===================== 館長日誌 ===================== */
-.journal-list { display: flex; flex-direction: column; gap: 10px; }
-.journal-entry {
-  padding: 1.2rem 1.5rem; position: relative; overflow: hidden;
-}
-.journal-entry::after {
-  content: ''; position: absolute; bottom: 0; left: 1.5rem; right: 1.5rem; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
-}
-.journal-entry:last-child::after { display: none; }
-.journal-meta { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
-.journal-date {
-  font-family: var(--latin); font-size: 10px; letter-spacing: 3px; font-weight: 300;
-  color: rgba(42,181,200,0.45); font-style: italic;
-}
-.jcat {
-  font-family: var(--latin); font-size: 8px; letter-spacing: 2px;
-  padding: 2px 8px; border-radius: 3px; border: 1px solid;
-}
-.jcat.music { color: rgba(192,132,252,0.7); border-color: rgba(192,132,252,0.2); background: rgba(192,132,252,0.05); }
-.jcat.book  { color: var(--aqua);           border-color: rgba(42,181,200,0.2);   background: rgba(42,181,200,0.05); }
-.jcat.memo  { color: var(--text-f);         border-color: rgba(255,255,255,0.1);  background: rgba(255,255,255,0.03); }
-.journal-title { font-family: var(--serif); font-size: 16px; letter-spacing: 2px; color: var(--text); margin-bottom: 0.3rem; }
-.journal-body { font-size: 12.5px; color: var(--text-m); line-height: 1.85; }
-.journal-footer { font-family: var(--latin); font-size: 9px; color: var(--text-f); margin-top: 0.4rem; letter-spacing: 1px; }
-
-/* ===================== 来館者ノート ===================== */
-.board-tabs { display: flex; gap: 7px; margin-bottom: 1.5rem; }
-.board-tab {
-  font-family: var(--serif); font-size: 13px; letter-spacing: 2px;
-  padding: 7px 18px; border-radius: 999px;
-  background: var(--glass); border: 1px solid var(--border);
-  color: var(--text-m); cursor: pointer; transition: all 0.2s;
-}
-.board-tab.active {
-  background: linear-gradient(135deg, rgba(42,181,200,0.12), rgba(122,232,240,0.06));
-  border-color: rgba(42,181,200,0.4); color: var(--foam);
-}
-.board-panel { display: none; }
-.board-panel.active { display: block; animation: fadeUp 0.3s ease; }
-
-/* キャンバス */
-.canvas-wrap { padding: 1rem; margin-bottom: 1rem; }
-.canvas-label {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 3px; color: var(--text-f); margin-bottom: 0.7rem;
-}
-#draw-canvas {
-  display: block; width: 100%; border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(5,15,28,0.8); cursor: crosshair; touch-action: none;
-}
-.tool-rows { margin-top: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.tool-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.tlbl { font-family: var(--latin); font-size: 9px; letter-spacing: 2px; color: var(--text-f); }
-input[type=color] { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; padding: 0; background: none; }
-input[type=range] { width: 72px; accent-color: var(--aqua); }
-.tbtn {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 1.5px;
-  padding: 5px 12px; border-radius: 6px;
-  background: var(--glass); border: 1px solid var(--border);
-  color: var(--text-m); cursor: pointer; transition: all 0.2s;
-}
-.tbtn:hover { border-color: var(--border-s); color: var(--foam); }
-.tbtn.on { background: rgba(42,181,200,0.12); border-color: rgba(42,181,200,0.4); color: var(--foam); }
-.dinput {
-  font-family: var(--sans); font-size: 11px;
-  background: var(--glass); border: 1px solid var(--border);
-  border-radius: 8px; padding: 6px 12px; color: var(--text); outline: none; transition: 0.2s;
-}
-.dinput:focus { border-color: var(--border-s); box-shadow: 0 0 0 3px var(--glow); }
-.dinput.wide { flex: 1; min-width: 0; }
-.text-form {
-  padding: 1.3rem; margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.7rem;
-}
-.tinput {
-  font-family: var(--sans); font-size: 12px; width: 100%;
-  background: var(--glass); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 13px; color: var(--text); outline: none; transition: 0.2s;
-}
-.tinput:focus { border-color: var(--border-s); box-shadow: 0 0 0 3px var(--glow); }
-.tarea {
-  font-family: var(--sans); font-size: 12px; width: 100%; min-height: 80px; resize: vertical;
-  background: var(--glass); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 13px; color: var(--text); outline: none; transition: 0.2s;
-}
-.tarea:focus { border-color: var(--border-s); box-shadow: 0 0 0 3px var(--glow); }
-.send-btn {
-  font-family: var(--serif); font-size: 13px; letter-spacing: 3px;
-  background: linear-gradient(135deg, rgba(42,181,200,0.15), rgba(122,232,240,0.08));
-  border: 1px solid rgba(42,181,200,0.35);
-  border-radius: 8px; color: var(--foam); cursor: pointer; padding: 8px 22px; transition: all 0.2s; align-self: flex-start;
-}
-.send-btn:hover { background: rgba(42,181,200,0.22); box-shadow: 0 0 20px var(--glow); }
-.status-line { font-family: var(--latin); font-size: 10px; color: var(--aqua); min-height: 16px; letter-spacing: 1px; }
-.posts { display: flex; flex-direction: column; gap: 8px; }
-.post-item { padding: 0.9rem 1.2rem; }
-.post-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.post-name { font-family: var(--serif); font-size: 16px; letter-spacing: 2px; color: var(--foam); }
-.post-date { font-family: var(--latin); font-size: 9px; color: var(--text-f); letter-spacing: 2px; }
-.post-body { font-size: 12px; color: var(--text-m); line-height: 1.75; }
-.recv-ttl {
-  font-family: var(--latin); font-size: 10px; letter-spacing: 4px; color: var(--text-f);
-  margin: 1.5rem 0 0.8rem; font-style: italic;
-}
-.recv-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); gap: 10px; }
-.recv-item { border-radius: 10px; overflow: hidden; transition: 0.2s; }
-.recv-item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-.recv-item img { width: 100%; display: block; }
-.recv-info { padding: 0.5rem 0.7rem; }
-.recv-name { font-family: var(--serif); font-size: 13px; letter-spacing: 1px; color: var(--foam); }
-.recv-msg  { font-size: 10px; color: var(--text-m); margin-top: 1px; }
-.hint-txt  { font-family: var(--latin); font-size: 10px; color: var(--text-f); letter-spacing: 1px; }
-
-/* ===================== フッター ===================== */
-.site-footer {
-  position: relative; z-index: 10; text-align: center; padding: 1.5rem;
-  border-top: 1px solid var(--border);
-  background: rgba(10,18,32,0.8);
-}
-.footer-en {
-  font-family: var(--latin); font-size: 9px; letter-spacing: 4px; font-weight: 100;
-  color: var(--text-f); font-style: italic; display: block; margin-bottom: 0.3rem;
-}
-.footer-jp {
-  font-family: var(--serif); font-size: 11px; letter-spacing: 3px;
-  color: rgba(42,181,200,0.2);
-}
-
-/* ===================== レスポンシブ ===================== */
-@media (max-width: 600px) {
-  .logo-jp { font-size: 17px; letter-spacing: 3px; }
-  .nav-btn { font-size: 11px; padding: 5px 9px; letter-spacing: 1px; }
-  .page-title { font-size: 28px; letter-spacing: 5px; }
-  .hero-title-jp { font-size: 32px; letter-spacing: 6px; }
-  .staff-layout { grid-template-columns: 1fr; }
-  .info-grid { grid-template-columns: 1fr; }
+@media (max-width: 640px){
+  section{ padding: 70px 20px; }
 }
 </style>
 </head>
 <body>
 
-<!-- 背景 -->
-<div class="bg">
-  <div class="bg-gradient"></div>
-  <div class="caustics"></div>
-  <div class="bubbles">
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<section class="hero">
+  <div class="sun"></div>
+  <div class="hero-content">
+    <div class="eyebrow">CREATIVE ARCHIVE</div>
+    <h1>ふりはら</h1>
+    <div class="tagline">— illustration &amp; digital works —</div>
   </div>
-  <div class="surface"></div>
+  <div class="grid-floor"></div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>✦ WELCOME TO MY WORLD ✦ ILLUST ✦ DESIGN ✦ DREAM POP ✦ 電脳世界 ✦ WELCOME TO MY WORLD ✦ ILLUST ✦ DESIGN ✦ DREAM POP ✦ 電脳世界 ✦</span>
+    <span aria-hidden="true">✦ WELCOME TO MY WORLD ✦ ILLUST ✦ DESIGN ✦ DREAM POP ✦ 電脳世界 ✦ WELCOME TO MY WORLD ✦ ILLUST ✦ DESIGN ✦ DREAM POP ✦ 電脳世界 ✦</span>
+  </div>
 </div>
 
-<!-- 閉館通知バー -->
-<div class="closure-bar">
-  <span class="closure-icon">⚠</span>
-  <span class="closure-text">TEMPORARY CLOSURE — 臨時閉館中</span>
-  <span class="closure-date">再開予定日 : 2019.03.15</span>
-</div>
+<section id="main-tabs">
+  <div class="section-label">ARCHIVE</div>
+  <div class="section-title">Look around</div>
 
-<!-- ヘッダー -->
-<header class="site-header">
-  <div class="header-inner">
-    <div class="logo-wrap">
-      <span class="logo-jp">旧淵ノ海遊館<span class="logo-badge">CLOSED</span></span>
-      <span class="logo-en">Fuchino Aquarium — Est. 2003</span>
+  <div class="tab-shell">
+    <div class="window-bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="window-title">hurihuri_archive.exe</span>
     </div>
-    <nav class="main-nav" id="main-nav">
-      <button class="nav-btn active" data-page="top">案内</button>
-      <button class="nav-btn" data-page="exhibit">展示室</button>
-      <button class="nav-btn" data-page="staff">スタッフ詳細</button>
-      <button class="nav-btn" data-page="visitors">来館者記録</button>
-      <button class="nav-btn" data-page="journal">館長日誌</button>
-      <button class="nav-btn" data-page="board">来館者ノート</button>
-    </nav>
+
+    <div class="tab-list" role="tablist" aria-label="コンテンツ切り替え">
+      <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-about" id="tab-about" data-tab="about">ABOUT</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-links" id="tab-links" data-tab="links">LINKS</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-collab" id="tab-collab" data-tab="collab">FRIENDS</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
+      <div class="window-body">
+        <p>はじめまして、<span class="highlight">ふりはら</span>です。元気な蝿です。</p>
+        <p>普段は各SNSに生息しています。LINKSタブから覗いてもらえたら嬉しいです。</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-links" role="tabpanel" aria-labelledby="tab-links">
+      <div class="window-body" style="padding-bottom:8px;">
+        <div class="link-grid">
+
+          <a class="link-card" href="#" target="_blank" rel="noopener">
+            <div class="bar"><span class="dot"></span>PIXIV.EXE</div>
+            <div class="content">
+              <div class="platform">pixiv</div>
+              <div class="desc">イラスト作品をメインに投稿しています</div>
+              <div class="arrow">VIEW WORKS →</div>
+            </div>
+          </a>
+
+          <a class="link-card" href="#" target="_blank" rel="noopener">
+            <div class="bar"><span class="dot"></span>X.EXE</div>
+            <div class="content">
+              <div class="platform">X (Twitter)</div>
+              <div class="desc">制作過程や日々のつぶやきなど</div>
+              <div class="arrow">FOLLOW →</div>
+            </div>
+          </a>
+
+          <a class="link-card" href="#" target="_blank" rel="noopener">
+            <div class="bar"><span class="dot"></span>BOOTH.EXE</div>
+            <div class="content">
+              <div class="platform">BOOTH</div>
+              <div class="desc">グッズ・データ販売はこちら</div>
+              <div class="arrow">SHOP →</div>
+            </div>
+          </a>
+
+          <a class="link-card" href="#" target="_blank" rel="noopener">
+            <div class="bar"><span class="dot"></span>INSTA.EXE</div>
+            <div class="content">
+              <div class="platform">Instagram</div>
+              <div class="desc">ラフや制作の裏側を中心に</div>
+              <div class="arrow">VIEW →</div>
+            </div>
+          </a>
+
+          <a class="link-card" href="#" target="_blank" rel="noopener">
+            <div class="bar"><span class="dot"></span>SKEB.EXE</div>
+            <div class="content">
+              <div class="platform">Skeb</div>
+              <div class="desc">依頼はこちらから受け付けています</div>
+              <div class="arrow">REQUEST →</div>
+            </div>
+          </a>
+
+          <a class="link-card" href="#" target="_blank" rel="noopener">
+            <div class="bar"><span class="dot"></span>MAIL.EXE</div>
+            <div class="content">
+              <div class="platform">Contact</div>
+              <div class="desc">お仕事のご相談はこちらまで</div>
+              <div class="arrow">CONTACT →</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-collab" role="tabpanel" aria-labelledby="tab-collab">
+      <div class="window-body">
+        <p style="opacity:0.6; font-size:13px; margin-bottom:18px;">ネットで仲良くしてもらってる人たちです、いつもありがとう〜</p>
+        <div class="collab-list">
+
+          <div class="collab-item">
+            <div class="collab-main">
+              <div class="name">◯◯ちゃん</div>
+              <div class="role">よく一緒に落書きしてます</div>
+            </div>
+            <a class="collab-link" href="#" target="_blank" rel="noopener">→</a>
+          </div>
+
+          <div class="collab-item">
+            <div class="collab-main">
+              <div class="name">◯◯さん</div>
+              <div class="role">お互いのファンアート描き合った仲</div>
+            </div>
+            <a class="collab-link" href="#" target="_blank" rel="noopener">→</a>
+          </div>
+
+          <div class="collab-item">
+            <div class="collab-main">
+              <div class="name">◯◯くん</div>
+              <div class="role">初期からずっと見てくれてる人</div>
+            </div>
+            <a class="collab-link" href="#" target="_blank" rel="noopener">→</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
-</header>
+</section>
 
-<main class="main-wrap">
-
-  <!-- ===== 案内 ===== -->
-  <section class="page active" id="page-top">
-    <div class="glass-panel top-hero">
-      <span class="hero-emblem">🪸</span>
-      <div class="hero-title-en">Welcome to Fuchino Aquarium</div>
-      <h1 class="hero-title-jp">旧淵ノ海遊館</h1>
-      <p class="hero-tagline">
-        深海への入口は、いつもひっそり佇んでいる。
-      </p>
-    </div>
-
-    <div class="closure-box glass-panel">
-      <div class="closure-box-label">REOPENING SCHEDULED</div>
-      <div class="closure-box-date">2019年3月15日</div>
-      <div class="closure-box-note">
-        ご不便をおかけしており申し訳ございません。<br>
-        再開まで今しばらくお待ちください。
-      </div>
-    </div>
-
-    <div class="glass-panel" style="margin-top:1.5rem;">
-      <div style="padding:1rem 1.5rem 0.5rem; border-bottom:1px solid var(--border);">
-        <span style="font-family:var(--latin);font-size:9px;letter-spacing:4px;color:var(--text-f);font-style:italic;">NOTICES</span>
-      </div>
-      <div class="notice-list" id="notice-list"></div>
-    </div>
-  </section>
-
-  <!-- ===== 展示室 ===== -->
-  <section class="page" id="page-exhibit">
-    <div class="page-header">
-      <div class="page-eyebrow">Exhibition Rooms</div>
-      <h2 class="page-title">展示室</h2>
-      <div class="page-rule"></div>
-      <div class="page-sub">一部の展示は現在非公開となっております</div>
-    </div>
-    <div class="exhibit-tabs" id="exhibit-tabs"></div>
-    <div class="specimen-grid" id="specimen-grid"></div>
-  </section>
-
-  <!-- ===== スタッフ詳細 ===== -->
-  <section class="page" id="page-staff">
-    <div class="page-header">
-      <div class="page-eyebrow">Staff Information</div>
-      <h2 class="page-title">スタッフ詳細</h2>
-      <div class="page-rule"></div>
-    </div>
-    <div class="glass-panel">
-      <div class="staff-layout" style="padding:2rem;">
-        <div class="staff-id-card glass-panel">
-          <div class="staff-photo">🌿</div>
-          <div class="staff-role">Director / Curator</div>
-          <div class="staff-name-jp">ふりはら</div>
-          <div class="status-pill staff-status"><div class="status-dot on"></div>在館中</div>
-          <div class="staff-id-no">STAFF ID : FNC-001</div>
-        </div>
-        <div class="staff-info">
-          <div class="info-row">
-            <div class="info-label">Name</div>
-            <div class="info-val lg">ふりはら</div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">About</div>
-            <div class="info-val">
-              インターネットと綺麗なものが好きな飛翔体。<br>
-              創作とかをゆるくやってます。よろしくね。<br>
-              詳しい自己紹介は<a href="https://www.notion.so/36818211ad4280cc941cc32418fc3180?source=copy_link" target="_blank" rel="noopener">こちら</a>
-            </div>
-          </div>
-          <div class="info-grid">
-            <div class="info-row">
-              <div class="info-label">Interests</div>
-              <div class="info-val">帯化植物・お絵描き・おしゃべり</div>
-            </div>
-            <div class="info-row">
-              <div class="info-label">Not Good At</div>
-              <div class="info-val">早起き・ジャンプスケア</div>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Tags</div>
-            <div class="tag-list">
-              <span class="tag">イラスト</span>
-              <span class="tag">小説</span>
-              <span class="tag">一次創作</span>
-            </div>
-          </div>
-          <div class="info-row">
-            <div class="info-label">Links</div>
-            <div class="sns-row">
-              <a href="https://www.pixiv.net/users/123244740" class="sns-a" title="Pixiv">𝙿</a>
-              <a href="https://x.com/e75vXVYsYi56568" class="sns-a" title="X/Twitter">𝕏</a>
-              <a href="https://www.tiktok.com/@wasa_kiwi10?_r=1&_t=ZS-95pbugWIq2O" class="sns-a" title="TikTok">♪</a>
-              <a href="https://marshmallow-qa.com/9gd98fk9a3myto0?t=xk6ws8&utm_medium=url_text&utm_source=promotion" class="sns-a" title="マシュマロ">🧁</a>
-              <a href="https://tohu6oheya.web.fc2.com/index.html" class="sns-a" title="とふのおへや">🌻</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 来館者記録 ===== -->
-  <section class="page" id="page-visitors">
-    <div class="page-header">
-      <div class="page-eyebrow">Visitor Records</div>
-      <h2 class="page-title">来館者記録</h2>
-      <div class="page-rule"></div>
-      <div class="page-sub">この館に縁のある方々の記録</div>
-    </div>
-    <div class="glass-panel">
-      <div class="visitor-list" id="visitor-list"></div>
-    </div>
-  </section>
-
-  <!-- ===== 館長日誌 ===== -->
-  <section class="page" id="page-journal">
-    <div class="page-header">
-      <div class="page-eyebrow">Director's Journal</div>
-      <h2 class="page-title">館長日誌</h2>
-      <div class="page-rule"></div>
-    </div>
-    <div class="glass-panel">
-      <div class="journal-list" id="journal-list"></div>
-    </div>
-  </section>
-
-  <!-- ===== 来館者ノート ===== -->
-  <section class="page" id="page-board">
-    <div class="page-header">
-      <div class="page-eyebrow">Visitor's Note</div>
-      <h2 class="page-title">来館者ノート</h2>
-      <div class="page-rule"></div>
-    </div>
-    <div class="board-tabs">
-      <button class="board-tab active" data-tab="draw">館内スケッチ</button>
-      <button class="board-tab" data-tab="text">飼育員への質問</button>
-    </div>
-
-    <div class="board-panel active" id="board-draw">
-      <div class="glass-panel canvas-wrap">
-        <div class="canvas-label">— Sketch the creatures you have encountered —</div>
-        <canvas id="draw-canvas" width="560" height="300"></canvas>
-        <div class="tool-rows">
-          <div class="tool-row">
-            <span class="tlbl">Color</span>
-            <input type="color" id="pen-color" value="#7de8f0">
-            <span class="tlbl">Size</span>
-            <input type="range" id="pen-size" min="1" max="20" value="3">
-            <button class="tbtn" id="eraser-btn">Eraser</button>
-            <button class="tbtn" id="clear-btn">Clear</button>
-          </div>
-          <div class="tool-row">
-            <input class="dinput" id="draw-name" placeholder="お名前（任意）" maxlength="20">
-            <input class="dinput wide" id="draw-msg" placeholder="ひとこと（任意）" maxlength="60">
-            <button class="send-btn" id="draw-send">提出する</button>
-          </div>
-        </div>
-      </div>
-      <div id="draw-status" class="status-line"></div>
-      <div class="recv-ttl">— received sketches —</div>
-      <div class="recv-grid" id="recv-grid">
-        <p class="hint-txt">Supabaseを設定すると届いたスケッチが表示されます</p>
-      </div>
-    </div>
-
-    <div class="board-panel" id="board-text">
-      <div class="glass-panel text-form">
-        <input class="tinput" id="text-name" placeholder="お名前（ニックネーム可）" maxlength="20">
-        <textarea class="tarea" id="text-msg" placeholder="飼育員へのご質問、ご感想などをどうぞ…" maxlength="300"></textarea>
-        <button class="send-btn" id="text-send">投函する</button>
-        <div id="text-status" class="status-line"></div>
-      </div>
-      <div class="posts" id="text-posts">
-        <p class="hint-txt" style="padding:1rem">Supabaseを設定すると書き込みが表示されます</p>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="site-footer">
-  <span class="footer-en">Fuchino Aquarium — All rights reserved</span>
-  <span class="footer-jp">旧淵ノ海遊館　© 2026　館長 ふりはら</span>
+<footer>
+  ✦ ふりはら CREATIVE ARCHIVE — 2026 <button class="secret-trigger" id="secretTrigger" aria-label="secret">✦</button>
 </footer>
 
-<script>
-/* ================================================
-   ★★★ ここを編集してカスタマイズしてね ★★★
-   ================================================ */
-
-// ---- お知らせ ----
-const NOTICES = [
-  { date:"2019.02.28", cat:"warn",  text:"館内設備の点検のため、2019年3月15日まで臨時閉館いたします。" },
-  { date:"2018.12.01", cat:"info",  text:"深海エリアに新展示「沈黙の回廊」をオープンしました。" },
-  { date:"2018.10.26", cat:"info",  text:"お子様向けミニゲーム「<a href='https://hurihara.github.io/visionary-alpaca-6c5fb7/kids/'>さかなにえさをあげよう！</a>」を公開しました。" },
-  { date:"2018.09.14", cat:"close", text:"一部の展示生物について、現在非公開となっております。詳細はお問い合わせください。" },
-  { date:"2018.06.03", cat:"info",  text:"開館15周年記念として、特別展示を実施いたしました。ご来館ありがとうございました。" },
-];
-
-// ---- 展示エリア（企画） ----
-const EXHIBITS = [
-  { id:"room-a", label:"異界回廊" },
-  { id:"room-b", label:"第一千載展示室" },
-  { id:"room-c", label:"魔法水槽" },
-  { id:"room-d", label:"特別展示" },
-  { id:"room-e", label:"地下社会エリア" },
-  { id:"room-f", label:"永久回廊" },
-  { id:"room-g", label:"特殊賭事水槽" },
-  { id:"room-h", label:"不協和展示室" },
-];
-
-// ---- 展示生物（企画っ子） ----
-// room: 上のEXHIBITSのidと合わせてね
-const SPECIMENS = [
-  { room:"room-a", icon:"🐝", name:"蜂須賀すみれ",  reading:"はちすかすみれ", desc:"CPあり。気だるげお兄さん", cs_url:"https://www.pixiv.net/artworks/140520866", active:true },
-  { room:"room-a", icon:"🐈‍⬛", name:"キャロル・ルイス", reading:"きゃろる・るいす", desc:"CPあり。生意気なねこちゃん", cs_url:"https://www.pixiv.net/artworks/141903576", active:true },
-  { room:"room-a", icon:"🌷", name:"有栖泰那", reading:"ありすだいな", desc:"恋多き弁護士くん", cs_url:"https://www.pixiv.net/artworks/142492770", active:true },
-  { room:"room-a", icon:"🐠", name:"オブラコ＝ヴェルシーナ", reading:"おぶらこ＝ゔぇるしーな", desc:"CPあり。暴れん坊ベタちゃん", cs_url:"https://www.pixiv.net/artworks/142615582", active:true },
-  { room:"room-a", icon:"⚖️", name:"フェイフェイ", reading:"ふぇいふぇい", desc:"ふにゃふにゃかわいい結合双生児", cs_url:"https://www.pixiv.net/artworks/142719986", active:true },
-  { room:"room-a", icon:"🐱", name:"ベリー・ベリー", reading:"べりー・べりー", desc:"カリスマ芸能人", cs_url:"https://www.pixiv.net/artworks/142924620", active:true },
-  { room:"room-a", icon:"🥬", name:"チシャ", reading:"ちしゃ", desc:"CPあり。男尊女卑タコ", cs_url:"https://www.pixiv.net/artworks/143019522", active:true },
-  { room:"room-a", icon:"🦈", name:"ネレイア・アビス＝グラキオス", reading:"ねれいあ・あびす＝ぐらきおす", desc:"こだわりつよつよ女子", cs_url:"https://www.pixiv.net/artworks/143095352", active:true },
-  { room:"room-a", icon:"🌆", name:"鳳暮六", reading:"おおとりくれむつ", desc:"CPあり。ニコニコ借金取り", cs_url:"https://www.pixiv.net/artworks/143651027", active:true },
-  { room:"room-a", icon:"🪷", name:"蜂須賀れんげ", reading:"はちすかれんげ", desc:"すみれさん大好きっ子", cs_url:"https://www.pixiv.net/artworks/144728581", active:true },
-  
-  { room:"room-b", icon:"🧳", name:"斑目レイカ", reading:"まだらめれいか", desc:"陽気で霧のような3-C担任", cs_url:"https://www.pixiv.net/artworks/140816540", active:true },
-  
-  { room:"room-c", icon:"💚", name:"ミド", reading:"みど", desc:"CPあり。アフヌン大好き反社魔法少女", cs_url:"https://www.pixiv.net/artworks/141538177", active:true },
-  { room:"room-c", icon:"🖤", name:"クロム", reading:"くろむ", desc:"CPあり。幼馴染大好き思想強魔法少女", cs_url:"https://www.pixiv.net/artworks/141538302", active:true },
-  
-  { room:"room-d", icon:"🐝", name:"蜂須賀すみれ", reading:"はちすかすみれ", desc:"CP×。けだるげ養蜂家。いかほてより参加", cs_url:"https://www.pixiv.net/artworks/142501012", active:true },
-  { room:"room-d", icon:"🐟", name:"ENA.txt", reading:"えな・てきすと", desc:"暴れ狂うジムリーダー", cs_url:"https://www.pixiv.net/artworks/142519046", active:true },
-  
-  { room:"room-e", icon:"🧢", name:"ワワチャン", reading:"わわちゃん", desc:"元気いっぱい医療班員", cs_url:"https://www.pixiv.net/artworks/143826215", active:true },
-  
-  { room:"room-f", icon:"🧿", name:"ルーメン・E・クラリオン", reading:"るーめん・いー・くらりおん", desc:"CPあり。穏やか狂気施設長", cs_url:"https://www.pixiv.net/artworks/144223110", active:true },
-  { room:"room-f", icon:"🪚", name:"セラ・カーディナル", reading:"せら・かーでぃなる", desc:"CPあり。意思疎通不可能副施設長", cs_url:"https://www.pixiv.net/artworks/144999273", active:true },
-  
-  { room:"room-g", icon:"🃏", name:"黒鉄耀", reading:"くろがねよう", desc:"にこにこ陽気なディーラー", cs_url:"https://www.pixiv.net/artworks/144801726", active:true },
-  { room:"room-g", icon:"🐕‍🦺", name:"ジャク", reading:"じゃく", desc:"イカれ警察官", cs_url:"https://www.pixiv.net/artworks/144956864", active:true },
-  
-  { room:"room-h", icon:"📣", name:"検閲官", reading:"けんえつかん", desc:"よく動く死体", cs_url:"https://www.pixiv.net/artworks/145349822", active:true },
-  { room:"room-h", icon:"🌇", name:"マリア・ヴァレンタイン", reading:"まりあ・ゔぁれんたいん", desc:"せわしないお兄さん", cs_url:"https://www.pixiv.net/artworks/145350554", active:true },
-
-];
-
-// ---- 来館者 ----
-const VISITORS = [
-  { no:"V-001", icon:"⚠️", name:"マちゃん",  url:"https://www.pixiv.net/users/115131546", badge:"常連", desc:"優しくていつも仲良くしてくれる大好きな子！かわいい絵上手い最高𝑩𝑰𝑮 𝑳𝑶𝑽𝑬" },
-  { no:"V-002", icon:"🐠", name:"えらちゃん", url:"https://www.pixiv.net/users/115101944", badge:"常連", desc:"たくさんお喋りしてくれる優しい子！𝑩𝑰𝑮 𝑳𝑶𝑽𝑬" },
-  { no:"V-003", icon:"🫧", name:"まなつちゃん", url:"https://www.pixiv.net/users/124567650", badge:"常連", desc:"優しくてかわいい親友！！！！絵めっちゃうまい𝑩𝑰𝑮 𝑳𝑶𝑽𝑬 そして、愛" },
-  { no:"V-004", icon:"🐱", name:"83さん", url:"https://www.pixiv.net/users/119173950", badge:"常連", desc:"人外を描くのがお上手なお友達！！！" },
-  { no:"V-005", icon:"🎭", name:"ふぉれさん", url:"https://www.pixiv.net/users/118024795", badge:"来館者", desc:"ふわふわでかわいい妹！！！" },
-  { no:"V-006", icon:"👻", name:"しょぼぉさん", url:"https://www.pixiv.net/users/113718811", badge:"来館者", desc:"絵がとんでもなく上手いすごいお友達！！仲良くしてくれてうれしい" },
-  { no:"V-007", icon:"🍦", name:"もかもか100さん", url:"https://www.pixiv.net/users/119770966", badge:"来館者", desc:"かわいいお友達！！！" },
-  { no:"V-008", icon:"🦎", name:"ありごまさん", url:"https://www.pixiv.net/users/123343084", badge:"来館者", desc:"めちゃくちゃ絵が上手いお友達！！かっこいい" },
-  { no:"V-009", icon:"8️⃣", name:"姉貴さん", url:"https://www.pixiv.net/users/123823570", badge:"来館者", desc:"絵もうごいらも小説も上手なすごいお友達！尊敬…" },
-  { no:"V-010", icon:"🩶", name:"セリーアさん", url:"https://www.pixiv.net/users/116571896", badge:"来館者", desc:"よくお話しするお友達〜！！やさしさ…" },
-  { no:"V-011", icon:"🍓", name:"いちごくりぃむさん", url:"https://www.pixiv.net/users/111862327", badge:"来館者", desc:"きらきらでかわいらしいお友達！！絵が上手い…" },
-  { no:"V-012", icon:"🐉", name:"ファイカさん", url:"https://www.pixiv.net/users/101738583", badge:"来館者", desc:"ひゃっほい！仲良し！いっぱいおしゃべりしてくれる" },
-  { no:"V-013", icon:"🌸", name:"わははあさん", url:"https://www.pixiv.net/users/116350934", badge:"来館者", desc:"きらきらな春を描くのがとっても上手なお友達！" },
-  { no:"V-014", icon:"🍳", name:"アックさん", url:"https://www.pixiv.net/users/100340426", badge:"来館者", desc:"かっこいいイラストを描くお友達‼️‼️" },
-  { no:"V-015", icon:"🐈‍⬛", name:"あぶらあげさん", url:"https://www.pixiv.net/users/114956595", badge:"来館者", desc:"キャラデザがめちゃくちゃ上手なお友達！！" },
-  { no:"V-016", icon:"🟢", name:"えるさん", url:"https://www.pixiv.net/users/91607845", badge:"来館者", desc:"よく気遣ってくれるすごく優しい方！！とても丁寧で素敵" },
-  { no:"V-017", icon:"👁️", name:"rinririnさん", url:"https://www.pixiv.net/users/113290593", badge:"来館者", desc:"キャラデザがめちゃくちゃ上手いお友達！！" },
-  { no:"V-018", icon:"🟦", name:"ゆっさん", url:"https://www.pixiv.net/users/125343382", badge:"来館者", desc:"スタイリッシュなイラストがとってもお上手なお友達！！！" },
-  { no:"V-019", icon:"🎩", name:"どろどろさん", url:"https://www.pixiv.net/users/124317264", badge:"来館者", desc:"絵もロゴもCSデザインも上手いお友達！！すごすぎる尊敬" },
-  { no:"V-020", icon:"🐦‍⬛", name:"Q0さん", url:"https://www.pixiv.net/users/116323160", badge:"来館者", desc:"キャラデザ全てがめっっっちゃくちゃ上手いお友達〜〜！！" },
-  { no:"V-021", icon:"🐟", name:"さばばさん", url:"https://www.pixiv.net/users/89929309", badge:"来館者", desc:"キャラデザも絵も設定も上手いドカ神絵師の友達！！！尊敬！！" },
-];
-
-// ---- 館長日誌 ----
-const JOURNAL = [
-  { date:"2026.06.03", cat:"memo",  title:"改修",     body:"サイトの改修したよ", footer:"" },
-  { date:"2026.05.25", cat:"memo",  title:"ねこ",     body:"ねこ飼うことになったよ", footer:"" },
-  { date:"2026.05.16", cat:"book",  title:"人の財布〜高畑朋子の場合〜", body:"読了。ぶっちゃけ祭歌の国ハルヴァニアの方が怖い。怖すぎる。数日ビクついてた", footer:"著者 第四境界/藤沢仁" },
-  { date:"2026.05.16", cat:"memo",  title:"シナイドリ", body:"シナイドリのぬいぐるみが届いた！！めっちゃでかい！！かわいい〜〜！", footer:"" },
-  { date:"2026.05.02", cat:"memo",  title:"いぬ", body:"いぬたくさん撫でてたくさんベロベロしてもらった！！！いぬ、かわいい", footer:"マルプー飼いたい" },
-  { date:"2026.04.29", cat:"memo",  title:"ARG", body:"TwitterのARGアカウント作った！垢多すぎてやばい", footer:"" },
-  { date:"2026.04.28", cat:"memo",  title:"クージョ", body:"探したのになかった！！！悲しすぎる", footer:"" },
-  { date:"2026.04.27", cat:"memo",  title:"キング作品", body:"ミザリーとシャイニングは読んだから次はクージョが読みたい！めちゃくちゃたのしみ〜", footer:"" },
-  { date:"2026.04.25", cat:"book",  title:"蟹工船", body:"先日蟹工船を読了した。めちゃくちゃ怖かった……。ご冥福をお祈りします", footer:"著者 小林多喜二" },
-];
-
-// ---- Supabase設定 ----
-const SUPABASE_URL     = 'https://ictpdsgbclltmfskxrtc.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljdHBkc2diY2xsdG1mc2t4cnRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxMTg5MDcsImV4cCI6MjA5MjY5NDkwN30.lGt8SvDdkn7w63Uetmkyg9SpfiX__7gBeQrZLYngxxM';
-
-/* ================================================ */
-
-// ナビゲーション
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('page-' + btn.dataset.page).classList.add('active');
-  });
-});
-
-// 掲示板タブ
-document.querySelectorAll('.board-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.board-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.board-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('board-' + btn.dataset.tab).classList.add('active');
-  });
-});
-
-// お知らせ
-function renderNotices() {
-  document.getElementById('notice-list').innerHTML = NOTICES.map(n => `
-    <div class="notice-item">
-      <span class="notice-date">${n.date}</span>
-      <span class="notice-cat ${n.cat}">${n.cat==='warn'?'NOTICE':n.cat==='info'?'INFO':'CLOSED'}</span>
-      <span class="notice-text">${n.text}</span>
+<div class="secret-overlay" id="secretOverlay">
+  <div class="secret-box">
+    <div class="window-bar">
+      <span>secret_room.exe</span>
+      <button class="secret-close" id="secretClose">CLOSE ✕</button>
     </div>
-  `).join('');
-}
+    <div class="secret-body">
+      <div class="secret-blink">✦ CONGRATULATIONS ✦</div>
+      <div class="secret-title">ひみつのへや</div>
+      <p>おめでとうございます。あなたは無事、何の得もない隠しページを発見してしまいました。</p>
+      <p>ここまで来る人はだいたいヒマか、私のことが好きかのどちらかです。多分後者だと思ってます。</p>
 
-// 展示室
-function renderSpecimens(rid) {
-  const list = SPECIMENS.filter(s => s.room === rid);
-  let i = 1;
-  document.getElementById('specimen-grid').innerHTML = list.length ? list.map(s => `
-    <div class="specimen-card glass-panel">
-      <div class="specimen-no">SPECIMEN — ${String(i++).padStart(3,'0')}</div>
-      <span class="specimen-icon">${s.icon}</span>
-      <div class="specimen-name">${s.name}</div>
-      <div class="specimen-read">${s.reading}</div>
-      <div class="specimen-desc">${s.desc}</div>
-      <div class="specimen-status">
-        <div class="status-dot ${s.active?'on':'off'}"></div>
-        ${s.active ? '現在展示中' : '現在非公開'}
+      <div class="ticket">
+        <div class="ticket-label">★ SPECIAL ITEM GET ★</div>
+        <div class="ticket-title">リクエストけん</div>
+        <div class="ticket-desc">この券を見せてくれた人は、わたしにイラストや小説のリクエストができます。</div>
+        <div class="ticket-code">CODE: HIMITSU-0713 / 有効期限: 私が忘れるまで</div>
       </div>
-      <a class="specimen-link" href="${s.cs_url}" target="_blank" rel="noopener">標本詳細を見る →</a>
+
+      <div class="secret-badge">よくぞ見つけた 👀</div>
     </div>
-  `).join('') : '<p class="hint-txt">この展示室には現在展示物がありません</p>';
-}
-function renderExhibits() {
-  const tabs = document.getElementById('exhibit-tabs');
-  tabs.innerHTML = EXHIBITS.map((e,i) => `
-    <button class="exhibit-tab ${i===0?'active':''}" data-rid="${e.id}">${e.label}</button>
-  `).join('');
-  tabs.querySelectorAll('.exhibit-tab').forEach(b => {
-    b.addEventListener('click', () => {
-      tabs.querySelectorAll('.exhibit-tab').forEach(x => x.classList.remove('active'));
-      b.classList.add('active'); renderSpecimens(b.dataset.rid);
+  </div>
+</div>
+
+<script>
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+
+      tabBtns.forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+      });
+
+      panels.forEach(p => {
+        p.classList.toggle('active', p.id === 'panel-' + target);
+      });
     });
   });
-  if (EXHIBITS[0]) renderSpecimens(EXHIBITS[0].id);
-}
 
-// 来館者
-function renderVisitors() {
-  document.getElementById('visitor-list').innerHTML = VISITORS.map(v => `
-    <div class="visitor-item">
-      <div class="visitor-no">${v.no}</div>
-      <div class="visitor-icon">${v.icon}</div>
-      <div class="visitor-info">
-        <a class="visitor-name" href="${v.url}" target="_blank" rel="noopener">${v.name}</a>
-        <div class="visitor-desc">${v.desc}</div>
-      </div>
-      <div class="visitor-badge">${v.badge}</div>
-    </div>
-  `).join('');
-}
+  const secretTrigger = document.getElementById('secretTrigger');
+  const secretOverlay = document.getElementById('secretOverlay');
+  const secretClose = document.getElementById('secretClose');
 
-// 館長日誌
-function renderJournal() {
-  document.getElementById('journal-list').innerHTML = JOURNAL.map(j => `
-    <div class="journal-entry">
-      <div class="journal-meta">
-        <span class="journal-date">${j.date}</span>
-        <span class="jcat ${j.cat}">${j.cat==='music'?'MUSIC':j.cat==='book'?'BOOK':'NOTE'}</span>
-      </div>
-      <div class="journal-title">${j.title}</div>
-      <div class="journal-body">${j.body}</div>
-      ${j.footer ? `<div class="journal-footer">${j.footer}</div>` : ''}
-    </div>
-  `).join('');
-}
-
-// キャンバス
-const canvas = document.getElementById('draw-canvas');
-const ctx = canvas.getContext('2d');
-ctx.fillStyle = 'rgba(5,15,28,0.9)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-let drawing=false, eraser=false, lx=0, ly=0;
-function pos(e) {
-  const r=canvas.getBoundingClientRect();
-  const sx=canvas.width/r.width, sy=canvas.height/r.height;
-  const s=e.touches?e.touches[0]:e;
-  return [(s.clientX-r.left)*sx,(s.clientY-r.top)*sy];
-}
-canvas.addEventListener('mousedown', e=>{drawing=true;[lx,ly]=pos(e);});
-canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;[lx,ly]=pos(e);},{passive:false});
-canvas.addEventListener('mousemove', e=>stroke(e));
-canvas.addEventListener('touchmove', e=>{e.preventDefault();stroke(e);},{passive:false});
-canvas.addEventListener('mouseup',   ()=>drawing=false);
-canvas.addEventListener('mouseleave',()=>drawing=false);
-canvas.addEventListener('touchend',  ()=>drawing=false);
-function stroke(e) {
-  if(!drawing) return;
-  const [x,y]=pos(e);
-  ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(x,y);
-  ctx.strokeStyle=eraser?'rgba(5,15,28,0.9)':document.getElementById('pen-color').value;
-  ctx.lineWidth=document.getElementById('pen-size').value;
-  ctx.lineCap=ctx.lineJoin='round'; ctx.stroke();
-  [lx,ly]=[x,y];
-}
-document.getElementById('eraser-btn').addEventListener('click',function(){
-  eraser=!eraser; this.classList.toggle('on',eraser); this.textContent=eraser?'Pen':'Eraser';
-});
-document.getElementById('clear-btn').addEventListener('click',()=>{
-  ctx.fillStyle='rgba(5,15,28,0.9)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-});
-
-// Supabase
-let sb=null;
-if(SUPABASE_URL&&SUPABASE_ANON_KEY){
-  const s=document.createElement('script');
-  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  s.onload=()=>{ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY); loadDrawings(); loadTextPosts(); };
-  document.head.appendChild(s);
-}
-document.getElementById('draw-send').addEventListener('click',async()=>{
-  const st=document.getElementById('draw-status');
-  if(!sb){st.textContent='Supabaseを設定してください';return;}
-  const name=document.getElementById('draw-name').value.trim()||'匿名';
-  const msg=document.getElementById('draw-msg').value.trim();
-  st.textContent='送信中…';
-  const{error}=await sb.from('drawings').insert({name,message:msg,image_data:canvas.toDataURL()});
-  if(error){st.textContent='Error: '+error.message;return;}
-  st.textContent='— 提出しました。ありがとうございます —';
-  ctx.fillStyle='rgba(5,15,28,0.9)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-  document.getElementById('draw-name').value=''; document.getElementById('draw-msg').value='';
-  loadDrawings();
-});
-async function loadDrawings(){
-  if(!sb) return;
-  const{data}=await sb.from('drawings').select('*').order('created_at',{ascending:false}).limit(30);
-  document.getElementById('recv-grid').innerHTML=data?.length?data.map(d=>`
-    <div class="recv-item glass-panel"><img src="${d.image_data}" alt="sketch by ${d.name}" loading="lazy">
-    <div class="recv-info"><div class="recv-name">${d.name}</div>${d.message?`<div class="recv-msg">${d.message}</div>`:''}</div></div>
-  `).join(''):'<p class="hint-txt">まだスケッチの投稿はありません</p>';
-}
-document.getElementById('text-send').addEventListener('click',async()=>{
-  const st=document.getElementById('text-status');
-  const name=document.getElementById('text-name').value.trim()||'匿名';
-  const msg=document.getElementById('text-msg').value.trim();
-  if(!msg){st.textContent='メッセージを入力してください';return;}
-  if(!sb){st.textContent='Supabaseを設定してください';return;}
-  st.textContent='投函中…';
-  const{error}=await sb.from('text_posts').insert({name,message:msg});
-  if(error){st.textContent='Error: '+error.message;return;}
-  st.textContent='— 投函しました —';
-  document.getElementById('text-name').value=''; document.getElementById('text-msg').value='';
-  loadTextPosts();
-});
-async function loadTextPosts(){
-  if(!sb) return;
-  const{data}=await sb.from('text_posts').select('*').order('created_at',{ascending:false}).limit(50);
-  document.getElementById('text-posts').innerHTML=data?.length?data.map(p=>{
-    const d=new Date(p.created_at);
-    const ds=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
-    return `<div class="post-item glass-panel"><div class="post-hd"><span class="post-name">${p.name}</span><span class="post-date">${ds}</span></div><div class="post-body">${p.message.replace(/</g,'&lt;')}</div></div>`;
-  }).join(''):'<p class="hint-txt" style="padding:1rem">まだ書き込みはありません</p>';
-}
-
-renderNotices(); renderExhibits(); renderVisitors(); renderJournal();
+  secretTrigger.addEventListener('click', () => {
+    secretOverlay.classList.add('open');
+  });
+  secretClose.addEventListener('click', () => {
+    secretOverlay.classList.remove('open');
+  });
+  secretOverlay.addEventListener('click', (e) => {
+    if (e.target === secretOverlay) secretOverlay.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') secretOverlay.classList.remove('open');
+  });
 </script>
 </body>
 </html>
