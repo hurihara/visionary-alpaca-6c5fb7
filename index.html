@@ -9,7 +9,6 @@
 <!-- ファビコン -->
 <link rel="icon" type="image/png" href="favicon-256.png">
 <link rel="icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 
 <!-- OGP (SNS共有時の見た目) -->
 <meta property="og:type" content="website">
@@ -248,6 +247,16 @@ section{
   padding: 10px 10px 0;
   background: rgba(24,10,46,0.4);
   border-bottom: 1px solid rgba(95,251,241,0.3);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(95,251,241,0.5) transparent;
+}
+.tab-list::-webkit-scrollbar{ height: 5px; }
+.tab-list::-webkit-scrollbar-thumb{
+  background: rgba(95,251,241,0.5);
+  border-radius: 3px;
 }
 .tab-btn{
   appearance:none;
@@ -262,6 +271,8 @@ section{
   color: var(--vw-cream);
   opacity: 0.55;
   transition: opacity 0.2s ease, background 0.2s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .tab-btn:hover{ opacity: 0.85; }
 .tab-btn.active{
@@ -336,6 +347,185 @@ section{
 @media (max-width: 560px){
   .collab-item{ grid-template-columns: 1fr; gap: 4px; }
   .collab-link{ justify-self:start; }
+}
+
+/* ===== gallery ===== */
+.gallery-note{
+  font-size: 12.5px;
+  opacity: 0.6;
+  margin-bottom: 18px;
+}
+.gallery-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+.gallery-card{
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  padding: 8px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  transform: rotate(var(--tilt, -2deg));
+  transition: transform 0.25s ease;
+}
+.gallery-card:nth-child(2n){ --tilt: 2deg; }
+.gallery-card:nth-child(3n){ --tilt: -1deg; }
+.gallery-card:hover{ transform: rotate(0deg) scale(1.04); }
+.gallery-card .frame{
+  height: 78%;
+  border-radius: 3px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    repeating-linear-gradient(45deg, #2d1b4e 0 6px, #4b2e83 6px 12px);
+  position: relative;
+  overflow:hidden;
+}
+.gallery-card .frame::after{
+  content:'NO IMAGE';
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(245,236,255,0.85);
+  background: rgba(24,10,46,0.55);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.gallery-card .cap{
+  height: 22%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #2d1b4e;
+  letter-spacing: 0.05em;
+}
+
+/* ===== gacha ===== */
+.gacha-wrap{
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  text-align:center;
+  padding: 10px 0 6px;
+}
+.gacha-machine{
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.5), transparent 45%),
+    linear-gradient(160deg, var(--vw-pink), var(--vw-purple) 70%);
+  border: 3px solid var(--vw-cyan);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 42px;
+  box-shadow: 0 0 30px rgba(255,110,199,0.4);
+  margin-bottom: 22px;
+  animation: gacha-idle 3s ease-in-out infinite;
+}
+@keyframes gacha-idle{
+  0%,100%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-6px) rotate(-3deg); }
+}
+.gacha-machine.spin{ animation: gacha-spin 0.6s ease-in-out; }
+@keyframes gacha-spin{
+  0%{ transform: rotate(0deg) scale(1); }
+  50%{ transform: rotate(320deg) scale(1.1); }
+  100%{ transform: rotate(720deg) scale(1); }
+}
+
+.gacha-btn{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--vw-navy);
+  background: var(--vw-cyan);
+  border: none;
+  padding: 12px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.gacha-btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 16px rgba(95,251,241,0.4); }
+.gacha-btn:active{ transform: translateY(0); }
+.gacha-btn:disabled{ opacity: 0.5; cursor: default; transform:none; box-shadow:none; }
+
+.gacha-result{
+  margin-top: 26px;
+  min-height: 100px;
+  width: 100%;
+  max-width: 320px;
+}
+.gacha-card{
+  border-radius: 10px;
+  padding: 20px 18px;
+  border: 1px solid rgba(95,251,241,0.4);
+  background: linear-gradient(160deg, rgba(75,46,131,0.5), rgba(24,10,46,0.6));
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.gacha-card.show{ opacity: 1; transform: translateY(0) scale(1); }
+.gacha-rarity{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  margin-bottom: 8px;
+}
+.gacha-rarity.r-n{ color: #b9b0c9; }
+.gacha-rarity.r-r{ color: var(--vw-cyan); }
+.gacha-rarity.r-sr{ color: var(--vw-pink); }
+.gacha-rarity.r-ssr{
+  background: linear-gradient(90deg, var(--vw-pink), var(--vw-peach), var(--vw-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.gacha-title{
+  font-family: var(--font-display);
+  font-size: 21px;
+  color: var(--vw-cream);
+}
+
+/* ===== game (breakout) ===== */
+.game-wrap{
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: 14px;
+}
+.game-hud{
+  display:flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 420px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--vw-cyan);
+}
+#breakoutCanvas{
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  border: 1px solid rgba(95,251,241,0.4);
+  background: linear-gradient(180deg, #2b1152, #180a2e 70%);
+  touch-action: none;
+}
+.game-controls{
+  display:flex;
+  gap: 10px;
+}
+.game-note{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  opacity: 0.55;
+  text-align:center;
 }
 
 /* ===== hidden trigger ===== */
@@ -444,6 +634,69 @@ section{
   opacity:0.5;
   margin-top: 6px;
 }
+.hit-counter.kiriban-glow span{
+  color: var(--vw-pink);
+  border-color: var(--vw-pink);
+  box-shadow: 0 0 10px rgba(255,110,199,0.8);
+  animation: kiriban-flicker 0.5s ease-in-out infinite alternate;
+}
+@keyframes kiriban-flicker{
+  from{ opacity: 1; }
+  to{ opacity: 0.6; }
+}
+
+/* confetti pieces */
+.kiriban-confetti{
+  position: fixed;
+  top: -20px;
+  z-index: 1200;
+  pointer-events: none;
+  font-size: 16px;
+  animation: kiriban-fall linear forwards;
+}
+@keyframes kiriban-fall{
+  0%{ transform: translateY(0) rotate(0deg); opacity: 1; }
+  100%{ transform: translateY(105vh) rotate(360deg); opacity: 0.3; }
+}
+
+/* kiriban banner (big hit) */
+.kiriban-banner{
+  position: fixed;
+  top: 14%;
+  left: 50%;
+  transform: translate(-50%, -20px);
+  z-index: 1250;
+  text-align:center;
+  padding: 18px 30px;
+  border-radius: 10px;
+  border: 1px solid var(--vw-cyan);
+  background: linear-gradient(160deg, rgba(75,46,131,0.95), rgba(24,10,46,0.97));
+  box-shadow: 0 0 50px rgba(255,110,199,0.5), 0 20px 50px rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.kiriban-banner.show{
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.kiriban-banner .kb-title{
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--vw-cream);
+  background: linear-gradient(90deg, var(--vw-pink), var(--vw-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 6px;
+}
+.kiriban-banner .kb-desc{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--vw-cream);
+  opacity: 0.75;
+}
 .secret-badge{
   margin-top: 22px;
   display:inline-block;
@@ -495,6 +748,120 @@ section{
 }
 @media (max-width: 560px){
   .bgm-toggle{ right: 14px; bottom: 14px; padding: 9px 13px; font-size: 11px; }
+}
+
+/* ===== retro footer parts ===== */
+.retro-strip{
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 24px 30px;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: 18px;
+  text-align:center;
+}
+
+.construction-bar{
+  width: 100%;
+  max-width: 420px;
+  height: 18px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--vw-peach) 0 14px,
+    var(--vw-navy) 14px 28px
+  );
+  background-size: 200% 100%;
+  animation: stripe-move 6s linear infinite;
+  box-shadow: 0 0 0 1px rgba(95,251,241,0.4);
+}
+@keyframes stripe-move{
+  from{ background-position: 0 0; }
+  to{ background-position: -200px 0; }
+}
+.construction-label{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--vw-peach);
+  opacity: 0.8;
+}
+
+.hit-counter-wrap{
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: 6px;
+}
+
+.retro-badges{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content:center;
+}
+.retro-badge{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--vw-navy);
+  background: var(--vw-cyan);
+  padding: 5px 10px;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.retro-badge:hover{ transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.retro-badge:active{ transform: translateY(0); }
+.retro-badge.alt{
+  background: var(--vw-pink);
+}
+.retro-badge.alt.is-on{
+  background: var(--vw-navy);
+  color: var(--vw-pink);
+  box-shadow: inset 0 0 0 1px var(--vw-pink);
+}
+
+/* floating hearts */
+.heart-pop{
+  position: fixed;
+  z-index: 1100;
+  pointer-events: none;
+  font-size: 18px;
+  color: var(--vw-pink);
+  animation: heart-rise 1.1s ease-out forwards;
+}
+@keyframes heart-rise{
+  0%{ transform: translateY(0) scale(0.6); opacity: 0; }
+  15%{ opacity: 1; }
+  100%{ transform: translateY(-90px) scale(1.1); opacity: 0; }
+}
+
+/* toast */
+.toast{
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 1100;
+  background: rgba(24,10,46,0.92);
+  border: 1px solid var(--vw-pink);
+  color: var(--vw-cream);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 10px 18px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  white-space: nowrap;
+}
+.toast.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ===== request ticket ===== */
@@ -657,6 +1024,9 @@ footer{
       <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-about" id="tab-about" data-tab="about">ABOUT</button>
       <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-links" id="tab-links" data-tab="links">LINKS</button>
       <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-collab" id="tab-collab" data-tab="collab">FRIENDS</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-gallery" id="tab-gallery" data-tab="gallery">GALLERY</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-gacha" id="tab-gacha" data-tab="gacha">GACHA</button>
+      <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-game" id="tab-game" data-tab="game">GAME</button>
     </div>
 
     <div class="tab-panel active" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
@@ -935,6 +1305,46 @@ footer{
       </div>
     </div>
 
+    <div class="tab-panel" id="panel-gallery" role="tabpanel" aria-labelledby="tab-gallery">
+      <div class="window-body">
+        <p class="gallery-note">準備中……！ここに描いた絵とか置いていく予定です。画像ファイルを差し替えたら表示されるようになってるよ。</p>
+        <div class="gallery-grid">
+          <div class="gallery-card"><div class="frame"></div><div class="cap">work_01</div></div>
+          <div class="gallery-card"><div class="frame"></div><div class="cap">work_02</div></div>
+          <div class="gallery-card"><div class="frame"></div><div class="cap">work_03</div></div>
+          <div class="gallery-card"><div class="frame"></div><div class="cap">work_04</div></div>
+          <div class="gallery-card"><div class="frame"></div><div class="cap">work_05</div></div>
+          <div class="gallery-card"><div class="frame"></div><div class="cap">work_06</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-gacha" role="tabpanel" aria-labelledby="tab-gacha">
+      <div class="window-body">
+        <div class="gacha-wrap">
+          <div class="gacha-machine" id="gachaMachine">🔮</div>
+          <button class="gacha-btn" id="gachaBtn" type="button">GACHAを回す</button>
+          <div class="gacha-result" id="gachaResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-game" role="tabpanel" aria-labelledby="tab-game">
+      <div class="window-body">
+        <div class="game-wrap">
+          <div class="game-hud">
+            <span>SCORE: <span id="gameScore">0</span></span>
+            <span id="gameStatus">READY</span>
+          </div>
+          <canvas id="breakoutCanvas" width="420" height="315"></canvas>
+          <div class="game-controls">
+            <button class="gacha-btn" id="gameStartBtn" type="button">スタート</button>
+          </div>
+          <p class="game-note">◀ ▶ キー、またはマウス/指でパドルを操作</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -942,6 +1352,32 @@ footer{
   <span class="bgm-dot"></span>
   <span id="bgmLabel">BGM OFF</span>
 </button>
+
+<div class="retro-strip">
+  <div>
+    <div class="construction-bar"></div>
+    <div class="construction-label">GALLERY UNDER CONSTRUCTION</div>
+  </div>
+
+  <div class="hit-counter-wrap">
+    <div class="hit-counter" id="hitCounter">
+      <span>0</span><span>0</span><span>0</span><span>0</span><span>0</span><span>0</span>
+    </div>
+    <div class="hit-label">VISITORS</div>
+  </div>
+
+  <div class="retro-badges">
+    <button class="retro-badge" id="heartBadge" type="button">BEST VIEWED WITH ♡</button>
+    <button class="retro-badge alt" id="rightClickBadge" type="button" aria-pressed="false">NO RIGHT CLICK PLZ</button>
+  </div>
+</div>
+
+<div class="kiriban-banner" id="kiribanBanner">
+  <div class="kb-title">★ キリ番 GET !! ★</div>
+  <div class="kb-desc" id="kiribanDesc">NO. 000000</div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <footer>
   ✦ ふりはら CREATIVE ARCHIVE — 2026 <button class="secret-trigger" id="secretTrigger" aria-label="secret">✦</button>
@@ -973,6 +1409,111 @@ footer{
 
 <script>
   const tabBtns = document.querySelectorAll('.tab-btn');
+
+  // ===== retro hit counter + kiriban (special number) detection =====
+  function spawnConfetti(count){
+    const chars = ['✦','♡','★','✧','●'];
+    const colors = ['#ff6ec7', '#5ffbf1', '#ffb997', '#ff2e88'];
+    for (let i = 0; i < count; i++){
+      const piece = document.createElement('span');
+      piece.className = 'kiriban-confetti';
+      piece.textContent = chars[Math.floor(Math.random()*chars.length)];
+      piece.style.left = Math.random()*100 + 'vw';
+      piece.style.color = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.fontSize = (12 + Math.random()*14) + 'px';
+      const duration = 2.2 + Math.random()*1.6;
+      piece.style.animationDuration = duration + 's';
+      piece.style.animationDelay = (Math.random()*0.6) + 's';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), (duration + 0.6) * 1000);
+    }
+  }
+
+  function judgeKiriban(numStr){
+    const last2 = numStr.slice(-2);
+    const last3 = numStr.slice(-3);
+    const isZorome3 = last3[0] === last3[1] && last3[1] === last3[2];
+    const isZorome2 = last2[0] === last2[1];
+    const endsRound = numStr.endsWith('000');
+    const isSeqAsc = '0123456789'.includes(last3) ;
+    const isSeqDesc = '9876543210'.includes(last3);
+    if (isZorome3 || endsRound || isSeqAsc || isSeqDesc) return 'big';
+    if (isZorome2) return 'small';
+    return null;
+  }
+
+  (function(){
+    const counterEl = document.getElementById('hitCounter');
+    if (!counterEl) return;
+    const digits = counterEl.querySelectorAll('span');
+    const numStr = String(Math.floor(Math.random() * 9000) + 1000).padStart(digits.length, '0');
+    digits.forEach((el, i) => { el.textContent = numStr[i]; });
+
+    const kiriban = judgeKiriban(numStr);
+    if (kiriban === 'big'){
+      counterEl.classList.add('kiriban-glow');
+      spawnConfetti(50);
+      const banner = document.getElementById('kiribanBanner');
+      const desc = document.getElementById('kiribanDesc');
+      desc.textContent = 'NO. ' + numStr;
+      setTimeout(() => banner.classList.add('show'), 300);
+      setTimeout(() => banner.classList.remove('show'), 4500);
+    } else if (kiriban === 'small'){
+      counterEl.classList.add('kiriban-glow');
+      spawnConfetti(16);
+    }
+  })();
+
+  // ===== toast helper =====
+  const toastEl = document.getElementById('toast');
+  let toastTimer = null;
+  function showToast(msg, duration = 2200){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), duration);
+  }
+
+  // ===== heart badge: floating hearts =====
+  const heartBadge = document.getElementById('heartBadge');
+  const heartChars = ['♡','♥','✦'];
+  heartBadge.addEventListener('click', () => {
+    const rect = heartBadge.getBoundingClientRect();
+    for (let i = 0; i < 6; i++){
+      const heart = document.createElement('span');
+      heart.className = 'heart-pop';
+      heart.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+      const x = rect.left + rect.width/2 + (Math.random()*60 - 30);
+      const y = rect.top + (Math.random()*10 - 5);
+      heart.style.left = x + 'px';
+      heart.style.top = y + 'px';
+      heart.style.animationDelay = (Math.random()*0.15) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1300);
+    }
+    showToast('見てくれてありがとう ♡');
+  });
+
+  // ===== right-click toggle =====
+  const rightClickBadge = document.getElementById('rightClickBadge');
+  let rightClickBlocked = false;
+  function handleContextMenu(e){
+    e.preventDefault();
+    showToast('コピーは……だめ！(たぶん)');
+  }
+  rightClickBadge.addEventListener('click', () => {
+    rightClickBlocked = !rightClickBlocked;
+    rightClickBadge.classList.toggle('is-on', rightClickBlocked);
+    rightClickBadge.setAttribute('aria-pressed', String(rightClickBlocked));
+    if (rightClickBlocked){
+      document.addEventListener('contextmenu', handleContextMenu);
+      showToast('右クリック禁止セット完了 🔒');
+    } else {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      showToast('右クリック禁止、解除したよ');
+    }
+  });
+
   const panels = document.querySelectorAll('.tab-panel');
 
   tabBtns.forEach(btn => {
@@ -987,6 +1528,8 @@ footer{
       panels.forEach(p => {
         p.classList.toggle('active', p.id === 'panel-' + target);
       });
+
+      btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     });
   });
 
@@ -1130,6 +1673,205 @@ footer{
     btn.addEventListener('click', () => {
       if (isPlaying) stop(); else start();
     });
+  })();
+
+  /* ===== GACHA: title draw ===== */
+  (function(){
+    const pool = [
+      { rarity: 'N',   cls: 'r-n',   weight: 45, titles: ['駆け出しの蝿', '深夜徘徊する蝿', '電脳蝿', 'グリッドを飛ぶ蝿', '夕陽に群がる蝿', 'サンセット虫', '今日も元気な蝿', 'ネオンに寄る虫'] },
+      { rarity: 'R',   cls: 'r-r',   weight: 32, titles: ['ヴェイパーの蝿', 'ネオン街の羽虫', 'グリッドの住人(蝿)', '電脳世界の羽音', '夢と現実を飛び回る蝿', '蜃気楼に住む蝿', 'ドットサンセットの蝿', 'おえかきんちゅ'] },
+      { rarity: 'SR',  cls: 'r-sr',  weight: 18, titles: ['ヴェイパーの申し子(蝿)', '午前3時を彷徨う蝿', '電脳世界の女王蝿', '虹色の羽を持つ蝿', 'グリッド地平線の蝿使い'] },
+      { rarity: 'SSR', cls: 'r-ssr', weight: 5,  titles: ['伝説の蝿', '虹色サンセットの化身', 'ひみつのへやの主', '電脳蝿の始祖', 'ヴェイパーワールドの女神'] },
+    ];
+    const totalWeight = pool.reduce((s, p) => s + p.weight, 0);
+
+    function draw(){
+      let r = Math.random() * totalWeight;
+      for (const p of pool){
+        if (r < p.weight) return p;
+        r -= p.weight;
+      }
+      return pool[0];
+    }
+
+    const btn = document.getElementById('gachaBtn');
+    const machine = document.getElementById('gachaMachine');
+    const resultEl = document.getElementById('gachaResult');
+
+    btn.addEventListener('click', () => {
+      btn.disabled = true;
+      machine.classList.remove('spin');
+      void machine.offsetWidth;
+      machine.classList.add('spin');
+      resultEl.innerHTML = '';
+
+      setTimeout(() => {
+        const picked = draw();
+        const title = picked.titles[Math.floor(Math.random() * picked.titles.length)];
+        const card = document.createElement('div');
+        card.className = 'gacha-card';
+        card.innerHTML = `<div class="gacha-rarity ${picked.cls}">★ ${picked.rarity}</div><div class="gacha-title">「${title}」</div>`;
+        resultEl.appendChild(card);
+        requestAnimationFrame(() => card.classList.add('show'));
+        if (picked.rarity === 'SSR') spawnConfetti(40);
+        btn.disabled = false;
+      }, 620);
+    });
+  })();
+
+  /* ===== GAME: breakout (block-kuzushi) ===== */
+  (function(){
+    const canvas = document.getElementById('breakoutCanvas');
+    if (!canvas) return;
+    const ctx2d = canvas.getContext('2d');
+    const scoreEl = document.getElementById('gameScore');
+    const statusEl = document.getElementById('gameStatus');
+    const startBtn = document.getElementById('gameStartBtn');
+
+    let W, H, dpr;
+    function resize(){
+      dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+
+    const colors = ['#ff6ec7', '#5ffbf1', '#ffb997', '#ff2e88'];
+    let paddle, ball, bricks, score, running, rows, cols;
+
+    function initGame(){
+      resize();
+      paddle = { w: W * 0.22, h: 10, x: W/2 - W*0.11, y: H - 22 };
+      ball = { x: W/2, y: H - 40, r: 6, vx: W*0.0038, vy: -W*0.0055 };
+      rows = 4; cols = 7;
+      bricks = [];
+      const bw = (W - 20) / cols;
+      const bh = 16;
+      for (let r = 0; r < rows; r++){
+        for (let c = 0; c < cols; c++){
+          bricks.push({ x: 10 + c*bw, y: 20 + r*(bh+6), w: bw-4, h: bh, alive: true, color: colors[r % colors.length] });
+        }
+      }
+      score = 0;
+      scoreEl.textContent = '0';
+      running = false;
+      statusEl.textContent = 'READY';
+      draw();
+    }
+
+    function draw(){
+      ctx2d.clearRect(0,0,W,H);
+      // grid floor lines for flavor
+      ctx2d.strokeStyle = 'rgba(95,251,241,0.12)';
+      for (let y = 0; y < H; y += 20){ ctx2d.beginPath(); ctx2d.moveTo(0,y); ctx2d.lineTo(W,y); ctx2d.stroke(); }
+
+      bricks.forEach(b => {
+        if (!b.alive) return;
+        ctx2d.fillStyle = b.color;
+        ctx2d.fillRect(b.x, b.y, b.w, b.h);
+      });
+
+      ctx2d.fillStyle = '#f5ecff';
+      ctx2d.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+
+      ctx2d.beginPath();
+      ctx2d.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+      ctx2d.fillStyle = '#ff6ec7';
+      ctx2d.fill();
+    }
+
+    function step(){
+      if (!running) return;
+
+      const speed = W * 0.012;
+      if (keys['ArrowLeft']) paddle.x = Math.max(paddle.x - speed, 0);
+      if (keys['ArrowRight']) paddle.x = Math.min(paddle.x + speed, W - paddle.w);
+
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      if (ball.x < ball.r || ball.x > W - ball.r) ball.vx *= -1;
+      if (ball.y < ball.r) ball.vy *= -1;
+
+      if (ball.y + ball.r >= paddle.y && ball.y - ball.r <= paddle.y + paddle.h &&
+          ball.x >= paddle.x && ball.x <= paddle.x + paddle.w && ball.vy > 0){
+        const hitPos = (ball.x - (paddle.x + paddle.w/2)) / (paddle.w/2);
+        ball.vx = hitPos * W * 0.006;
+        ball.vy = -Math.abs(ball.vy);
+      }
+
+      bricks.forEach(b => {
+        if (!b.alive) return;
+        if (ball.x > b.x && ball.x < b.x + b.w && ball.y - ball.r < b.y + b.h && ball.y + ball.r > b.y){
+          b.alive = false;
+          ball.vy *= -1;
+          score += 10;
+          scoreEl.textContent = score;
+        }
+      });
+
+      if (ball.y - ball.r > H){
+        running = false;
+        keys['ArrowLeft'] = false;
+        keys['ArrowRight'] = false;
+        statusEl.textContent = 'GAME OVER';
+        startBtn.textContent = 'もういちど';
+        draw();
+        return;
+      }
+
+      if (bricks.every(b => !b.alive)){
+        running = false;
+        keys['ArrowLeft'] = false;
+        keys['ArrowRight'] = false;
+        statusEl.textContent = 'CLEAR!! 🎉';
+        startBtn.textContent = 'もういちど';
+        spawnConfetti(35);
+        draw();
+        return;
+      }
+
+      draw();
+      requestAnimationFrame(step);
+    }
+
+    function movePaddleTo(clientX){
+      if (!running) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      paddle.x = Math.min(Math.max(x - paddle.w/2, 0), W - paddle.w);
+    }
+
+    canvas.addEventListener('mousemove', (e) => movePaddleTo(e.clientX));
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      movePaddleTo(e.touches[0].clientX);
+    }, { passive: false });
+
+    const keys = {};
+    document.addEventListener('keydown', (e) => {
+      if (!running) return;
+      if (['ArrowLeft','ArrowRight'].includes(e.key)){
+        keys[e.key] = true;
+        e.preventDefault();
+      }
+    });
+    document.addEventListener('keyup', (e) => {
+      if (['ArrowLeft','ArrowRight'].includes(e.key)) keys[e.key] = false;
+    });
+
+    startBtn.addEventListener('click', () => {
+      initGame();
+      running = true;
+      statusEl.textContent = 'PLAYING';
+      startBtn.textContent = 'リスタート';
+      requestAnimationFrame(step);
+    });
+
+    initGame();
   })();
 </script>
 </body>
